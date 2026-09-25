@@ -1,18 +1,66 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useColorScheme } from 'react-native';
+import { Tabs } from "expo-router";
+import { Text } from "react-native";
 
-import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
+import { styles } from "@/styles/navigation.styles";
 
-SplashScreen.preventAutoHideAsync();
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+export default function RootLayout() {
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
-      <AppTabs />
-    </ThemeProvider>
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: styles.tabBar,
+        tabBarActiveTintColor: "#2E7D32",
+        tabBarInactiveTintColor: "#6B7280",
+        tabBarLabelStyle: styles.tabBarLabel,
+      }}
+    >
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: "Home",
+          tabBarIcon: ({ color }) => (
+            <Text style={{ color, fontSize: 20 }}>
+              🏠
+            </Text>
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="tarefas"
+        options={{
+          title: "Tarefas",
+          tabBarIcon: ({ color }) => (
+            <Text style={{ color, fontSize: 20 }}>
+              📋
+            </Text>
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="aprovacoes"
+        options={{
+          title: "Aprovações",
+          tabBarIcon: ({ color }) => (
+            <Text style={{ color, fontSize: 20 }}>
+              ✅
+            </Text>
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="recompensas"
+        options={{
+          title: "Recompensas",
+          tabBarIcon: ({ color }) => (
+            <Text style={{ color, fontSize: 20 }}>
+              🎁
+            </Text>
+          ),
+        }}
+      />
+    </Tabs>
   );
 }

@@ -55,4 +55,4 @@ try {
   // A coluna já existe
 }
 
-console.log("Tabelas usuarios, tarefas, conclusoes e recompensas prontas!");
+console.log("Tabelas usuarios, tarefas, conclusoes, recompensas e resgates prontas!");

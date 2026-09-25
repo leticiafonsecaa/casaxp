@@ -54,4 +54,21 @@ router.delete("/:id", (req, res) => {
   });
 });
 
+// Buscar usuário por ID
+router.get("/:id", (req, res) => {
+  const { id } = req.params;
+
+  const usuario = db
+    .prepare("SELECT * FROM usuarios WHERE id = ?")
+    .get(id);
+
+  if (!usuario) {
+    return res.status(404).json({
+      erro: "Usuário não encontrado."
+    });
+  }
+
+  res.json(usuario);
+});
+
 export default router;
