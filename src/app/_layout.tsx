@@ -10,7 +10,7 @@ export default function RootLayout() {
         headerShown: false,
         tabBarStyle: styles.tabBar,
         tabBarActiveTintColor: "#2E7D32",
-        tabBarInactiveTintColor: "#6B7280",
+        tabBarInactiveTintColor: "#9CA3AF",
         tabBarLabelStyle: styles.tabBarLabel,
       }}
     >
@@ -19,7 +19,7 @@ export default function RootLayout() {
         options={{
           title: "Home",
           tabBarIcon: ({ color }) => (
-            <Text style={{ color, fontSize: 20 }}>
+            <Text style={{ color, fontSize: 19 }}>
               🏠
             </Text>
           ),
@@ -31,7 +31,7 @@ export default function RootLayout() {
         options={{
           title: "Tarefas",
           tabBarIcon: ({ color }) => (
-            <Text style={{ color, fontSize: 20 }}>
+            <Text style={{ color, fontSize: 19 }}>
               📋
             </Text>
           ),
@@ -43,7 +43,7 @@ export default function RootLayout() {
         options={{
           title: "Aprovações",
           tabBarIcon: ({ color }) => (
-            <Text style={{ color, fontSize: 20 }}>
+            <Text style={{ color, fontSize: 19 }}>
               ✅
             </Text>
           ),
@@ -55,7 +55,7 @@ export default function RootLayout() {
         options={{
           title: "Recompensas",
           tabBarIcon: ({ color }) => (
-            <Text style={{ color, fontSize: 20 }}>
+            <Text style={{ color, fontSize: 19 }}>
               🎁
             </Text>
           ),

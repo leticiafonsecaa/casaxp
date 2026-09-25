@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Pressable,
-    Text,
-    View,
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
 } from "react-native";
 
 import {
-    aprovarConclusao,
-    buscarConclusoes,
+  aprovarConclusao,
+  buscarConclusoes,
 } from "@/services/api";
 
 import { styles } from "@/styles/aprovacoes.styles";
@@ -74,11 +75,11 @@ export default function Aprovacoes() {
 
   if (carregando) {
     return (
-      <View style={styles.container}>
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" />
 
-        <Text style={styles.subtitle}>
-          Carregando conclusões...
+        <Text style={styles.loadingText}>
+          Carregando aprovações...
         </Text>
       </View>
     );
@@ -89,59 +90,107 @@ export default function Aprovacoes() {
   );
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
+    >
+      <Text style={styles.eyebrow}>
+        ÁREA DO RESPONSÁVEL
+      </Text>
+
       <Text style={styles.title}>
-        Aprovações
+        Aprovar tarefas ✅
       </Text>
 
       <Text style={styles.subtitle}>
-        Confira as tarefas realizadas antes de liberar o XP.
+        Confira o que foi realizado antes de liberar o XP.
       </Text>
 
       {erro !== "" && (
-        <Text style={styles.error}>
-          {erro}
-        </Text>
+        <View style={styles.errorCard}>
+          <Text style={styles.error}>
+            {erro}
+          </Text>
+        </View>
       )}
 
       {pendentes.length === 0 ? (
         <View style={styles.emptyCard}>
+          <View style={styles.emptyIconContainer}>
+            <Text style={styles.emptyIcon}>
+              ✓
+            </Text>
+          </View>
+
           <Text style={styles.emptyTitle}>
-            Nenhuma tarefa pendente
+            Tudo em dia!
           </Text>
 
           <Text style={styles.emptyText}>
-            Quando uma tarefa for concluída, ela aparecerá aqui para aprovação.
+            Não há tarefas aguardando aprovação no momento.
           </Text>
         </View>
       ) : (
-        pendentes.map((conclusao) => (
-          <View
-            key={conclusao.id}
-            style={styles.approvalCard}
-          >
-            <Text style={styles.taskTitle}>
-              {conclusao.tarefa}
+        <>
+          <View style={styles.pendingBadge}>
+            <Text style={styles.pendingText}>
+              {pendentes.length}{" "}
+              {pendentes.length === 1
+                ? "tarefa aguardando"
+                : "tarefas aguardando"}
             </Text>
-
-            <Text style={styles.userText}>
-              Realizada por: {conclusao.usuario}
-            </Text>
-
-            <Pressable
-              style={styles.approveButton}
-              onPress={() => handleAprovar(conclusao.id)}
-              disabled={aprovando === conclusao.id}
-            >
-              <Text style={styles.approveButtonText}>
-                {aprovando === conclusao.id
-                  ? "Aprovando..."
-                  : "Aprovar tarefa"}
-              </Text>
-            </Pressable>
           </View>
-        ))
+
+          {pendentes.map((conclusao) => (
+            <View
+              key={conclusao.id}
+              style={styles.approvalCard}
+            >
+              <View style={styles.cardTop}>
+                <View style={styles.taskIcon}>
+                  <Text style={styles.taskEmoji}>
+                    ✓
+                  </Text>
+                </View>
+
+                <View style={styles.awaitingBadge}>
+                  <Text style={styles.awaitingText}>
+                    Aguardando
+                  </Text>
+                </View>
+              </View>
+
+              <Text style={styles.taskTitle}>
+                {conclusao.tarefa}
+              </Text>
+
+              <Text style={styles.userText}>
+                Realizada por{" "}
+                <Text style={styles.userName}>
+                  {conclusao.usuario}
+                </Text>
+              </Text>
+
+              <Pressable
+                style={[
+                  styles.approveButton,
+                  aprovando === conclusao.id &&
+                    styles.approveButtonDisabled,
+                ]}
+                onPress={() => handleAprovar(conclusao.id)}
+                disabled={aprovando === conclusao.id}
+              >
+                <Text style={styles.approveButtonText}>
+                  {aprovando === conclusao.id
+                    ? "Aprovando..."
+                    : "Aprovar e liberar XP"}
+                </Text>
+              </Pressable>
+            </View>
+          ))}
+        </>
       )}
-    </View>
+    </ScrollView>
   );
 }

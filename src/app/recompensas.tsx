@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Pressable,
-    Text,
-    View,
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
 } from "react-native";
 
 import {
-    buscarRecompensas,
-    resgatarRecompensa,
+  buscarRecompensas,
+  resgatarRecompensa,
 } from "@/services/api";
 
 import { styles } from "@/styles/recompensas.styles";
@@ -67,10 +68,10 @@ export default function Recompensas() {
 
   if (carregando) {
     return (
-      <View style={styles.container}>
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" />
 
-        <Text style={styles.subtitle}>
+        <Text style={styles.loadingText}>
           Carregando recompensas...
         </Text>
       </View>
@@ -78,59 +79,105 @@ export default function Recompensas() {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
+    >
+      <Text style={styles.eyebrow}>
+        LOJA DE RECOMPENSAS
+      </Text>
+
       <Text style={styles.title}>
-        Recompensas 🎁
+        Troque seu XP 🎁
       </Text>
 
       <Text style={styles.subtitle}>
-        Troque seu XP por recompensas.
+        Use o XP que você conquistou para desbloquear recompensas.
       </Text>
 
       {mensagem !== "" && (
-        <Text style={styles.success}>
-          {mensagem}
-        </Text>
+        <View style={styles.successCard}>
+          <Text style={styles.successIcon}>
+            ✓
+          </Text>
+
+          <Text style={styles.successText}>
+            {mensagem}
+          </Text>
+        </View>
       )}
 
       {erro !== "" && (
-        <Text style={styles.error}>
-          {erro}
-        </Text>
+        <View style={styles.errorCard}>
+          <Text style={styles.error}>
+            {erro}
+          </Text>
+        </View>
       )}
 
-      {recompensas.map((recompensa) => (
-        <View
-          key={recompensa.id}
-          style={styles.rewardCard}
-        >
-          <Text style={styles.rewardTitle}>
-            {recompensa.nome}
+      {recompensas.length === 0 ? (
+        <View style={styles.emptyCard}>
+          <Text style={styles.emptyIcon}>
+            🎁
           </Text>
 
-          {recompensa.descricao && (
-            <Text style={styles.rewardDescription}>
-              {recompensa.descricao}
-            </Text>
-          )}
-
-          <Text style={styles.rewardCost}>
-            ⭐ {recompensa.custo_xp} XP
+          <Text style={styles.emptyTitle}>
+            Nenhuma recompensa disponível
           </Text>
 
-          <Pressable
-            style={styles.redeemButton}
-            onPress={() => handleResgatar(recompensa.id)}
-            disabled={resgatando === recompensa.id}
-          >
-            <Text style={styles.redeemButtonText}>
-              {resgatando === recompensa.id
-                ? "Resgatando..."
-                : "Resgatar"}
-            </Text>
-          </Pressable>
+          <Text style={styles.emptyText}>
+            Novas recompensas aparecerão aqui.
+          </Text>
         </View>
-      ))}
-    </View>
+      ) : (
+        recompensas.map((recompensa) => (
+          <View
+            key={recompensa.id}
+            style={styles.rewardCard}
+          >
+            <View style={styles.rewardHeader}>
+              <View style={styles.rewardIcon}>
+                <Text style={styles.rewardEmoji}>
+                  🎁
+                </Text>
+              </View>
+
+              <View style={styles.costBadge}>
+                <Text style={styles.costText}>
+                  ⭐ {recompensa.custo_xp} XP
+                </Text>
+              </View>
+            </View>
+
+            <Text style={styles.rewardTitle}>
+              {recompensa.nome}
+            </Text>
+
+            {recompensa.descricao && (
+              <Text style={styles.rewardDescription}>
+                {recompensa.descricao}
+              </Text>
+            )}
+
+            <Pressable
+              style={[
+                styles.redeemButton,
+                resgatando === recompensa.id &&
+                  styles.redeemButtonDisabled,
+              ]}
+              onPress={() => handleResgatar(recompensa.id)}
+              disabled={resgatando === recompensa.id}
+            >
+              <Text style={styles.redeemButtonText}>
+                {resgatando === recompensa.id
+                  ? "Resgatando..."
+                  : "Resgatar recompensa"}
+              </Text>
+            </Pressable>
+          </View>
+        ))
+      )}
+    </ScrollView>
   );
 }

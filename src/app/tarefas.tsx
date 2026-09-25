@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Pressable,
-    Text,
-    View,
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
 } from "react-native";
 
 import { buscarTarefas, concluirTarefa } from "@/services/api";
@@ -65,10 +66,10 @@ export default function Tarefas() {
 
   if (carregando) {
     return (
-      <View style={styles.container}>
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" />
 
-        <Text style={styles.subtitle}>
+        <Text style={styles.loadingText}>
           Carregando tarefas...
         </Text>
       </View>
@@ -76,24 +77,66 @@ export default function Tarefas() {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
+    >
+      <Text style={styles.eyebrow}>
+        MINHAS TAREFAS
+      </Text>
+
       <Text style={styles.title}>
-        Minhas tarefas
+        Bora cumprir as tarefas? 🚀
+      </Text>
+
+      <Text style={styles.subtitle}>
+        Complete suas tarefas e acumule XP.
       </Text>
 
       {erro !== "" && (
-        <Text style={styles.error}>
-          {erro}
-        </Text>
+        <View style={styles.errorCard}>
+          <Text style={styles.error}>
+            {erro}
+          </Text>
+        </View>
       )}
 
       {tarefas.length === 0 ? (
-        <Text style={styles.subtitle}>
-          Nenhuma tarefa cadastrada.
-        </Text>
+        <View style={styles.emptyCard}>
+          <Text style={styles.emptyIcon}>
+            📋
+          </Text>
+
+          <Text style={styles.emptyTitle}>
+            Nenhuma tarefa por enquanto
+          </Text>
+
+          <Text style={styles.emptyText}>
+            Quando uma tarefa for cadastrada,
+            ela aparecerá aqui.
+          </Text>
+        </View>
       ) : (
         tarefas.map((tarefa) => (
-          <View key={tarefa.id} style={styles.taskCard}>
+          <View
+            key={tarefa.id}
+            style={styles.taskCard}
+          >
+            <View style={styles.taskHeader}>
+              <View style={styles.taskIcon}>
+                <Text style={styles.taskEmoji}>
+                  🧹
+                </Text>
+              </View>
+
+              <View style={styles.pointsBadge}>
+                <Text style={styles.pointsText}>
+                  +{tarefa.pontos} XP
+                </Text>
+              </View>
+            </View>
+
             <Text style={styles.taskTitle}>
               {tarefa.titulo}
             </Text>
@@ -104,12 +147,12 @@ export default function Tarefas() {
               </Text>
             )}
 
-            <Text style={styles.taskPoints}>
-              ⭐ {tarefa.pontos} XP
-            </Text>
-
             <Pressable
-              style={styles.completeButton}
+              style={[
+                styles.completeButton,
+                concluindo === tarefa.id &&
+                  styles.completeButtonDisabled,
+              ]}
               onPress={() => handleConcluirTarefa(tarefa.id)}
               disabled={concluindo === tarefa.id}
             >
@@ -122,6 +165,6 @@ export default function Tarefas() {
           </View>
         ))
       )}
-    </View>
+    </ScrollView>
   );
 }

@@ -1,71 +1,161 @@
 import { StyleSheet } from "react-native";
 
-export const styles =StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#F5F7FA",
-        padding: 24,
-    },
+export const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F7F8FA",
+  },
 
-    title:{
-        marginTop: 40,
-        fontSize: 30,
-        fontWeight: "700",
-        color: "#1F2937",
-    },
+  content: {
+    paddingHorizontal: 22,
+    paddingTop: 54,
+    paddingBottom: 100,
+  },
 
-    subtitle: {
-        marginTop: 10,
-        fontSize: 16,
-        lineHeight: 23,
-        color: "#6B7280",
-    },
+  loadingContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#F7F8FA",
+  },
 
-    taskCard: {
-        marginTop: 16,
-        padding: 20,
-        borderRadius: 18,
-        backgroundColor: "#FFFFFF",
-    },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 15,
+    color: "#6B7280",
+  },
 
-    taskTitle: {
-        fontSize: 19,
-        fontWeight: "700",
-        color: "#1F2937",
-    },
+  eyebrow: {
+    fontSize: 12,
+    fontWeight: "800",
+    letterSpacing: 1.2,
+    color: "#2E7D32",
+  },
 
-    taskDescription: {
-        marginTop: 8,
-        fontSize: 14,
-        lineHeight: 21,
-        color: "#6B7280",
-    },
+  title: {
+    marginTop: 7,
+    fontSize: 29,
+    lineHeight: 35,
+    fontWeight: "800",
+    color: "#17201A",
+  },
 
-    taskPoints: {
-        marginTop: 14,
-        fontSize: 16,
-        fontWeight: "700",
-        color: "#2E7D32",
-    },
+  subtitle: {
+    marginTop: 9,
+    fontSize: 15,
+    lineHeight: 22,
+    color: "#6B7280",
+  },
 
-    error: {
-        marginTop: 16,
-        fontSize: 14,
-        color: "#B91C1C",
-    },
+  errorCard: {
+    marginTop: 20,
+    padding: 14,
+    borderRadius: 16,
+    backgroundColor: "#FEECEC",
+  },
 
-    completeButton: {
-        marginTop: 18,
-        padding: 14,
-        borderRadius: 14,
-        backgroundColor: "#2E7D32",
-        alignItems: "center",
-    },
+  error: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: "#B91C1C",
+  },
 
-    completeButtonText: {
-        fontSize: 15,
-        fontWeight: "600",
-        color: "#FFFFFF",
-    },
+  taskCard: {
+    marginTop: 20,
+    padding: 20,
+    borderRadius: 22,
+    backgroundColor: "#FFFFFF",
+  },
 
+  taskHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+
+  taskIcon: {
+    width: 52,
+    height: 52,
+    borderRadius: 17,
+    backgroundColor: "#E8F5E9",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  taskEmoji: {
+    fontSize: 25,
+  },
+
+  pointsBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 20,
+    backgroundColor: "#FFF7E6",
+  },
+
+  pointsText: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: "#D97706",
+  },
+
+  taskTitle: {
+    marginTop: 17,
+    fontSize: 20,
+    fontWeight: "800",
+    color: "#1F2937",
+  },
+
+  taskDescription: {
+    marginTop: 8,
+    fontSize: 14,
+    lineHeight: 21,
+    color: "#6B7280",
+  },
+
+  completeButton: {
+    marginTop: 20,
+    paddingVertical: 15,
+    borderRadius: 15,
+    backgroundColor: "#2E7D32",
+    alignItems: "center",
+  },
+
+  completeButtonDisabled: {
+    opacity: 0.6,
+  },
+
+  completeButtonText: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#FFFFFF",
+  },
+
+  emptyCard: {
+    marginTop: 28,
+    padding: 26,
+    borderRadius: 22,
+    backgroundColor: "#FFFFFF",
+    alignItems: "center",
+  },
+
+  emptyIcon: {
+    fontSize: 34,
+  },
+
+  emptyTitle: {
+    marginTop: 14,
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#1F2937",
+    textAlign: "center",
+  },
+
+  emptyText: {
+    marginTop: 8,
+    fontSize: 14,
+    lineHeight: 21,
+    color: "#6B7280",
+    textAlign: "center",
+  },
 });
