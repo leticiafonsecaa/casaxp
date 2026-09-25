@@ -1,56 +1,287 @@
-# Welcome to your Expo app 👋
+# 🏠 CasaXP
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+O **CasaXP** é um aplicativo desenvolvido para ajudar famílias a organizar as tarefas domésticas de adolescentes de uma forma simples, organizada e motivadora.
 
-## Get started
+A proposta é transformar as tarefas do dia a dia em um sistema de **XP e recompensas**.
 
-1. Install dependencies
+## 💡 Como funciona
 
-   ```bash
-   npm install
-   ```
+O funcionamento do CasaXP é baseado em um ciclo simples:
 
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```text
+👨‍👩‍👧 Responsável
+        ↓
+📋 Cria uma tarefa
+        ↓
+📱 Adolescente realiza a tarefa
+        ↓
+✅ Marca como concluída
+        ↓
+👨‍👩‍👧 Responsável aprova
+        ↓
+⭐ Adolescente recebe XP
+        ↓
+🎁 XP pode ser trocado por recompensas
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### Exemplo
 
-### Other setup steps
+O responsável pode criar uma tarefa:
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+> 🧹 **Arrumar o quarto — 30 XP**
 
-## Learn more
+O adolescente realiza a tarefa e marca como concluída.
 
-To learn more about developing your project with Expo, look at the following resources:
+Depois que o responsável aprovar:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```text
++30 XP ⭐
+```
 
-## Join the community
+Quando tiver XP suficiente, o adolescente poderá utilizar seus pontos para resgatar recompensas.
 
-Join our community of developers creating universal apps.
+Exemplo:
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```text
+🎁 +1 hora de computador
+💰 Custo: 100 XP
+```
+
+---
+
+# 🛠️ Tecnologias
+
+O projeto utiliza:
+
+### Frontend
+
+* React Native
+* Expo
+* Expo Router
+* TypeScript
+
+### Backend
+
+* Node.js
+* Express
+* TypeScript
+
+### Banco de dados
+
+* SQLite
+* better-sqlite3
+
+## 🏗️ Arquitetura
+
+```text
+📱 React Native / Expo
+          ↓
+🌐 Node.js + Express API
+          ↓
+🗄️ SQLite
+```
+
+> Atualmente, o desenvolvimento está concentrado no **backend e na API**. O aplicativo mobile ainda está em desenvolvimento.
+
+---
+
+# 🌐 Backend
+
+O backend é responsável pelas regras de negócio do CasaXP e pela comunicação com o banco de dados.
+
+Ele está localizado na pasta:
+
+```text
+backend/
+```
+
+A API possui endpoints para:
+
+* Usuários
+* Tarefas
+* Conclusões
+* Recompensas
+* Resgates
+
+Principais rotas:
+
+```text
+/usuarios
+/tarefas
+/conclusoes
+/recompensas
+/resgates
+```
+
+---
+
+# 🗄️ Banco de dados
+
+O CasaXP utiliza **SQLite** para armazenar os dados.
+
+As principais tabelas são:
+
+* `usuarios`
+* `tarefas`
+* `conclusoes`
+* `recompensas`
+* `resgates`
+
+O relacionamento entre elas permite controlar:
+
+```text
+Usuário
+   │
+   ├── Tarefas
+   │
+   └── Conclusões
+          │
+          └── XP
+
+Recompensas
+   │
+   └── Resgates
+```
+
+---
+
+# ⭐ Sistema de XP
+
+O XP é concedido quando uma tarefa concluída é aprovada pelo responsável.
+
+Por exemplo:
+
+```text
+Tarefa: Lavar a louça
+Valor: 20 XP
+
+        ↓
+
+Conclusão da tarefa
+
+        ↓
+
+Aprovação do responsável
+
+        ↓
+
+Usuário recebe +20 XP
+```
+
+O sistema também verifica se o usuário possui XP suficiente antes de permitir o resgate de uma recompensa.
+
+---
+
+# 🧪 Testando o backend
+
+Atualmente, o CasaXP pode ser testado diretamente através da **API**, utilizando ferramentas como:
+
+* Insomnia
+* Postman
+* Thunder Client
+* cURL
+* Navegador, para requisições `GET`
+
+## 📦 Instalação
+
+Clone o projeto e entre na pasta do backend:
+
+```bash
+cd backend
+```
+
+Instale as dependências:
+
+```bash
+npm install
+```
+
+## ▶️ Executando a API
+
+Inicie o servidor:
+
+```bash
+npm run dev
+```
+
+A API será executada em:
+
+```text
+http://localhost:3000
+```
+
+Ao iniciar, o banco de dados SQLite também será conectado e suas tabelas serão criadas automaticamente.
+
+---
+
+# 🔎 Testando uma rota
+
+Depois de iniciar o backend, você pode acessar:
+
+```text
+http://localhost:3000/
+```
+
+A API deverá retornar:
+
+```json
+{
+  "mensagem": "CasaXP API funcionando! 🚀"
+}
+```
+
+Também é possível testar:
+
+```text
+GET /usuarios
+GET /tarefas
+GET /conclusoes
+GET /recompensas
+GET /resgates
+```
+
+Exemplo:
+
+```text
+http://localhost:3000/usuarios
+```
+
+---
+
+# 📂 Estrutura principal
+
+```text
+casaxp/
+│
+├── app/                    # Aplicativo mobile
+│
+├── assets/                 # Recursos do aplicativo
+│
+├── backend/                # API
+│   ├── src/
+│   │   ├── database.ts
+│   │   ├── server.ts
+│   │   ├── usuarios.ts
+│   │   ├── tarefas.ts
+│   │   ├── conclusoes.ts
+│   │   ├── recompensas.ts
+│   │   ├── resgates.ts
+│   │   └── database/
+│   │       └── init.ts
+│   │
+│   └── database/
+│       └── casaxp.db
+│
+├── app.json
+├── package.json
+├── tsconfig.json
+└── README.md
+```
+
+---
+
+# 👩‍💻 Autora
+
+**Letícia**
+
+Projeto pessoal desenvolvido para estudo e prática de desenvolvimento **mobile, backend, APIs REST e banco de dados**.
