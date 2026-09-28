@@ -83,7 +83,7 @@ Pode:
 * Acompanhar seu XP
 * Resgatar recompensas
 
-O sistema atualmente utiliza uma troca simples de perfil, sem autenticação ou senha.
+> ⚠️ O sistema atualmente utiliza uma troca simples de perfil, **sem autenticação ou senha**. Isso significa que qualquer pessoa pode trocar para o perfil de Responsável. Por enquanto, o app é indicado apenas para testes e desenvolvimento.
 
 ---
 
@@ -183,7 +183,7 @@ O resgate é registrado no banco de dados.
 🗄️ SQLite
 ```
 
-O aplicativo mobile se comunica com a API REST, enquanto o backend é responsável pelas regras de negócio e pela comunicação com o banco de dados.
+O aplicativo se comunica com a API REST, enquanto o backend é responsável pelas regras de negócio e pela comunicação com o banco de dados.
 
 ---
 
@@ -251,9 +251,9 @@ O arquivo do banco é mantido localmente e não é versionado no Git.
 
 ---
 
-# 📱 Aplicativo Mobile
+# 📱 Aplicativo
 
-O aplicativo foi desenvolvido utilizando React Native com Expo e Expo Router.
+O aplicativo foi desenvolvido utilizando React Native com Expo e Expo Router. Ele pode ser aberto no **navegador (web)**, no **celular** (com o Expo Go) ou em um **emulador Android**.
 
 As principais telas atualmente são:
 
@@ -282,7 +282,7 @@ O conteúdo apresentado muda de acordo com o perfil selecionado.
 Clone o projeto:
 
 ```bash
-git clone <URL_DO_REPOSITORIO>
+git clone https://github.com/leticiafonsecaa/casaxp.git
 ```
 
 Entre na pasta:
@@ -291,7 +291,7 @@ Entre na pasta:
 cd casaxp
 ```
 
-Instale as dependências do projeto:
+Instale as dependências do aplicativo:
 
 ```bash
 npm install
@@ -303,7 +303,7 @@ Entre no backend:
 cd backend
 ```
 
-Instale as dependências:
+Instale as dependências do backend:
 
 ```bash
 npm install
@@ -311,7 +311,11 @@ npm install
 
 ---
 
-# ▶️ Executando o Backend
+# ▶️ Executando o projeto
+
+O projeto tem duas partes que precisam rodar **ao mesmo tempo**, cada uma em um terminal.
+
+### 1️⃣ Terminal 1 — Backend
 
 Dentro da pasta `backend`, execute:
 
@@ -327,17 +331,27 @@ http://localhost:3000
 
 Ao iniciar, o banco de dados SQLite será conectado e suas tabelas serão criadas automaticamente.
 
----
+### 2️⃣ Terminal 2 — Aplicativo
 
-# 📱 Executando o aplicativo
-
-Na raiz do projeto, execute:
+Na raiz do projeto (pasta `casaxp`), execute:
 
 ```bash
 npx expo start
 ```
 
-O aplicativo pode ser executado utilizando o ambiente Expo configurado para o projeto.
+### 3️⃣ Escolha como abrir o app
+
+* **Navegador (web):** pressione a tecla `w` no terminal.
+* **Celular:** leia o QR Code com o aplicativo **Expo Go**.
+* **Emulador Android:** pressione a tecla `a` no terminal.
+
+Para abrir direto no navegador:
+
+```bash
+npx expo start --web
+```
+
+> 💡 No celular, o endereço `localhost` aponta para o próprio celular, e não para o computador. Nesse caso, use o IP do computador na rede (por exemplo, `http://192.168.0.10:3000`) como endereço da API no arquivo `src/services/api.ts`.
 
 ---
 
