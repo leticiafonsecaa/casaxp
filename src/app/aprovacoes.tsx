@@ -7,6 +7,8 @@ import {
   View,
 } from "react-native";
 
+import { router } from "expo-router";
+
 import {
   aprovarConclusao,
   buscarConclusoes,
@@ -106,6 +108,15 @@ export default function Aprovacoes() {
       <Text style={styles.subtitle}>
         Confira o que foi realizado antes de liberar o XP.
       </Text>
+
+    <Pressable
+      style={styles.newTaskButton}
+      onPress={() => router.push("/nova-tarefa")}
+    >
+      <Text style={styles.newTaskButtonText}>
+        + Nova tarefa
+      </Text>
+    </Pressable>
 
       {erro !== "" && (
         <View style={styles.errorCard}>

@@ -106,3 +106,95 @@ export async function resgatarRecompensa(
 
   return dados;
 }
+
+export async function criarTarefa(dados: {
+  titulo: string;
+  descricao: string;
+  pontos: number;
+  usuario_id: number;
+}) {
+  const resposta = await fetch(`${API_URL}/tarefas`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(dados),
+  });
+
+  const resultado = await resposta.json();
+
+  if (!resposta.ok) {
+    throw new Error(
+      resultado.erro || "Não foi possível cadastrar a tarefa."
+    );
+  }
+
+  return resultado;
+}
+
+export async function excluirTarefa(tarefaId: number) {
+  const resposta = await fetch(
+    `${API_URL}/tarefas/${tarefaId}`,
+    {
+      method: "DELETE",
+    }
+  );
+
+  const texto = await resposta.text();
+
+  console.log("DELETE STATUS:", resposta.status);
+  console.log("DELETE RESPOSTA:", texto);
+
+  if (!resposta.ok) {
+    throw new Error(
+      "Não foi possível excluir a tarefa."
+    );
+  }
+
+  return true;
+}
+
+export async function criarRecompensa(dados: {
+  nome: string;
+  descricao: string;
+  custo_xp: number;
+}) {
+  const resposta = await fetch(`${API_URL}/recompensas`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(dados),
+  });
+
+  const resultado = await resposta.json();
+
+  if (!resposta.ok) {
+    throw new Error(
+      resultado.erro || "Não foi possível cadastrar a recompensa."
+    );
+  }
+
+  return resultado;
+}
+
+export async function excluirRecompensa(
+  recompensaId: number
+) {
+  const resposta = await fetch(
+    `${API_URL}/recompensas/${recompensaId}`,
+    {
+      method: "DELETE",
+    }
+  );
+
+  const texto = await resposta.text();
+
+  if (!resposta.ok) {
+    throw new Error(
+      "Não foi possível excluir a recompensa."
+    );
+  }
+
+  return texto;
+}

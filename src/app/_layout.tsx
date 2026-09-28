@@ -61,6 +61,37 @@ export default function RootLayout() {
           ),
         }}
       />
+
+      <Tabs.Screen
+        name="perfil"
+        options={{
+          title: "Perfil",
+          tabBarIcon: ({ color }) => (
+            <Text style={{ color, fontSize: 19 }}>👤</Text>
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="nova-tarefa"
+        options={{
+          href: null,
+        }}
+      />
+
+      <Tabs.Screen
+        name="nova-recompensa"
+        options={{
+          href: null,
+        }}
+      />
+
+      <Tabs.Screen
+        name="gerenciar-recompensas"
+        options={{
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }

@@ -7,7 +7,12 @@ import {
   View,
 } from "react-native";
 
-import { buscarTarefas, concluirTarefa } from "@/services/api";
+import {
+  buscarTarefas,
+  concluirTarefa,
+  excluirTarefa
+} from "@/services/api";
+
 import { styles } from "@/styles/tarefas.styles";
 
 type Tarefa = {
@@ -61,6 +66,38 @@ export default function Tarefas() {
       );
     } finally {
       setConcluindo(null);
+    }
+  }
+
+  async function handleExcluirTarefa(tarefaId: number) {
+    const confirmar = window.confirm(
+      "Tem certeza que deseja excluir esta tarefa?"
+    );
+
+    if (!confirmar) {
+      return;
+    }
+
+    try {
+      setErro("");
+
+      console.log("EXCLUINDO TAREFA:", tarefaId);
+
+      const resultado = await excluirTarefa(tarefaId);
+
+      console.log("RESPOSTA DA EXCLUSÃO:", resultado);
+
+      await carregarTarefas();
+
+      console.log("LISTA ATUALIZADA");
+    } catch (error) {
+      console.log("ERRO AO EXCLUIR:", error);
+
+      setErro(
+        error instanceof Error
+          ? error.message
+          : "Não foi possível excluir a tarefa."
+      );
     }
   }
 
@@ -162,6 +199,18 @@ export default function Tarefas() {
                   : "Concluir tarefa"}
               </Text>
             </Pressable>
+
+            <Pressable
+  style={styles.deleteButton}
+  onPress={() => {
+    console.log("CLICOU NO EXCLUIR:", tarefa.id);
+    handleExcluirTarefa(tarefa.id);
+  }}
+>
+  <Text style={styles.deleteButtonText}>
+    Excluir tarefa
+  </Text>
+</Pressable>
           </View>
         ))
       )}

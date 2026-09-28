@@ -40,9 +40,23 @@ router.post("/", (req, res) => {
 router.delete("/:id", (req, res) => {
   const { id } = req.params;
 
-  const resultado = db
-    .prepare("DELETE FROM recompensas WHERE id = ?")
-    .run(id);
+  const excluir = db.transaction(() => {
+    db.prepare(`
+      DELETE FROM resgates
+      WHERE recompensa_id = ?
+    `).run(id);
+
+    const resultado = db
+      .prepare(`
+        DELETE FROM recompensas
+        WHERE id = ?
+      `)
+      .run(id);
+
+    return resultado;
+  });
+
+  const resultado = excluir();
 
   if (resultado.changes === 0) {
     return res.status(404).json({

@@ -54,26 +54,42 @@ export const styles = StyleSheet.create({
     backgroundColor: "#FEECEC",
   },
 
-  error: {
+  errorText: {
     fontSize: 14,
     lineHeight: 20,
     color: "#B91C1C",
   },
 
-  taskCard: {
+  newRewardButton: {
+    marginTop: 20,
+    paddingVertical: 14,
+    borderRadius: 15,
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1,
+    borderColor: "#2E7D32",
+    alignItems: "center",
+  },
+
+  newRewardButtonText: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#2E7D32",
+  },
+
+  rewardCard: {
     marginTop: 20,
     padding: 20,
     borderRadius: 22,
     backgroundColor: "#FFFFFF",
   },
 
-  taskHeader: {
+  rewardHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
   },
 
-  taskIcon: {
+  rewardIcon: {
     width: 52,
     height: 52,
     borderRadius: 17,
@@ -82,57 +98,39 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
   },
 
-  taskEmoji: {
+  rewardEmoji: {
     fontSize: 25,
   },
 
-  pointsBadge: {
+  costBadge: {
     paddingHorizontal: 12,
     paddingVertical: 7,
     borderRadius: 20,
     backgroundColor: "#FFF7E6",
   },
 
-  pointsText: {
+  costText: {
     fontSize: 13,
     fontWeight: "800",
     color: "#D97706",
   },
 
-  taskTitle: {
+  rewardTitle: {
     marginTop: 17,
     fontSize: 20,
     fontWeight: "800",
     color: "#1F2937",
   },
 
-  taskDescription: {
+  rewardDescription: {
     marginTop: 8,
     fontSize: 14,
     lineHeight: 21,
     color: "#6B7280",
   },
 
-  completeButton: {
-    marginTop: 20,
-    paddingVertical: 15,
-    borderRadius: 15,
-    backgroundColor: "#2E7D32",
-    alignItems: "center",
-  },
-
-  completeButtonDisabled: {
-    opacity: 0.6,
-  },
-
-  completeButtonText: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: "#FFFFFF",
-  },
-
   deleteButton: {
-    marginTop: 10,
+    marginTop: 20,
     paddingVertical: 13,
     borderRadius: 15,
     backgroundColor: "#FEECEC",

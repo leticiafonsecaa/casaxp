@@ -1,7 +1,8 @@
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import {
   ActivityIndicator,
+  Pressable,
   ScrollView,
   Text,
   View,
@@ -97,12 +98,19 @@ export default function Home() {
           Minhas tarefas
         </Text>
 
-        <Text style={styles.seeAll}>
-          Ver todas
-        </Text>
+        <Pressable
+          onPress={() => router.push("/tarefas")}
+        >
+          <Text style={styles.seeAll}>
+            Ver todas
+          </Text>
+        </Pressable>
       </View>
 
-      <View style={styles.taskCard}>
+      <Pressable
+        style={styles.taskCard}
+        onPress={() => router.push("/tarefas")}
+      >
         <View style={styles.taskIcon}>
           <Text style={styles.taskEmoji}>
             🧽
@@ -122,9 +130,12 @@ export default function Home() {
         <Text style={styles.arrow}>
           ›
         </Text>
-      </View>
+      </Pressable>
 
-      <View style={styles.rewardCard}>
+      <Pressable
+        style={styles.rewardCard}
+        onPress={() => router.push("/recompensas")}
+      >
         <View style={styles.rewardIcon}>
           <Text style={styles.rewardEmoji}>
             🎁
@@ -144,7 +155,7 @@ export default function Home() {
         <Text style={styles.arrow}>
           ›
         </Text>
-      </View>
+      </Pressable>
     </ScrollView>
   );
 }

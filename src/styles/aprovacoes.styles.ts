@@ -47,6 +47,22 @@ export const styles = StyleSheet.create({
     color: "#6B7280",
   },
 
+  newTaskButton: {
+    marginTop: 20,
+    paddingVertical: 14,
+    borderRadius: 15,
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1,
+    borderColor: "#2E7D32",
+    alignItems: "center",
+  },
+
+newTaskButtonText: {
+  fontSize: 15,
+  fontWeight: "700",
+  color: "#2E7D32",
+},
+
   errorCard: {
     marginTop: 20,
     padding: 14,
