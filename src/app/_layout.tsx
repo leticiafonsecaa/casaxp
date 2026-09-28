@@ -1,97 +1,92 @@
 import { Tabs } from "expo-router";
 import { Text } from "react-native";
 
+import { UsuarioProvider } from "@/context/usuario";
 import { styles } from "@/styles/navigation.styles";
 
 export default function RootLayout() {
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: styles.tabBar,
-        tabBarActiveTintColor: "#2E7D32",
-        tabBarInactiveTintColor: "#9CA3AF",
-        tabBarLabelStyle: styles.tabBarLabel,
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color }) => (
-            <Text style={{ color, fontSize: 19 }}>
-              🏠
-            </Text>
-          ),
+    <UsuarioProvider>
+      <Tabs
+        screenOptions={{
+          headerShown: false,
+          tabBarStyle: styles.tabBar,
+          tabBarActiveTintColor: "#2E7D32",
+          tabBarInactiveTintColor: "#9CA3AF",
+          tabBarLabelStyle: styles.tabBarLabel,
         }}
-      />
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: "Home",
+            tabBarIcon: ({ color }) => (
+              <Text style={{ color, fontSize: 19 }}>🏠</Text>
+            ),
+          }}
+        />
 
-      <Tabs.Screen
-        name="tarefas"
-        options={{
-          title: "Tarefas",
-          tabBarIcon: ({ color }) => (
-            <Text style={{ color, fontSize: 19 }}>
-              📋
-            </Text>
-          ),
-        }}
-      />
+        <Tabs.Screen
+          name="tarefas"
+          options={{
+            title: "Tarefas",
+            tabBarIcon: ({ color }) => (
+              <Text style={{ color, fontSize: 19 }}>📋</Text>
+            ),
+          }}
+        />
 
-      <Tabs.Screen
-        name="aprovacoes"
-        options={{
-          title: "Aprovações",
-          tabBarIcon: ({ color }) => (
-            <Text style={{ color, fontSize: 19 }}>
-              ✅
-            </Text>
-          ),
-        }}
-      />
+        <Tabs.Screen
+          name="aprovacoes"
+          options={{
+            title: "Aprovações",
+            tabBarIcon: ({ color }) => (
+              <Text style={{ color, fontSize: 19 }}>✅</Text>
+            ),
+          }}
+        />
 
-      <Tabs.Screen
-        name="recompensas"
-        options={{
-          title: "Recompensas",
-          tabBarIcon: ({ color }) => (
-            <Text style={{ color, fontSize: 19 }}>
-              🎁
-            </Text>
-          ),
-        }}
-      />
+        <Tabs.Screen
+          name="recompensas"
+          options={{
+            title: "Recompensas",
+            tabBarIcon: ({ color }) => (
+              <Text style={{ color, fontSize: 19 }}>🎁</Text>
+            ),
+          }}
+        />
 
-      <Tabs.Screen
-        name="perfil"
-        options={{
-          title: "Perfil",
-          tabBarIcon: ({ color }) => (
-            <Text style={{ color, fontSize: 19 }}>👤</Text>
-          ),
-        }}
-      />
+        <Tabs.Screen
+          name="perfil"
+          options={{
+            title: "Perfil",
+            tabBarIcon: ({ color }) => (
+              <Text style={{ color, fontSize: 19 }}>👤</Text>
+            ),
+          }}
+        />
 
-      <Tabs.Screen
-        name="nova-tarefa"
-        options={{
-          href: null,
-        }}
-      />
+        <Tabs.Screen
+          name="nova-tarefa"
+          options={{
+            href: null,
+          }}
+        />
 
-      <Tabs.Screen
-        name="nova-recompensa"
-        options={{
-          href: null,
-        }}
-      />
+        <Tabs.Screen
+          name="nova-recompensa"
+          options={{
+            href: null,
+          }}
+        />
 
-      <Tabs.Screen
-        name="gerenciar-recompensas"
-        options={{
-          href: null,
-        }}
-      />
-    </Tabs>
+        <Tabs.Screen
+          name="gerenciar-recompensas"
+          options={{
+            href: null,
+          }}
+        />
+      </Tabs>
+    </UsuarioProvider>
   );
 }

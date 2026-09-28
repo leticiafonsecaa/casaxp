@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -7,10 +8,13 @@ import {
   View,
 } from "react-native";
 
+import { useUsuario } from "@/context/usuario";
+
 import {
+  buscarConclusoes,
   buscarTarefas,
   concluirTarefa,
-  excluirTarefa
+  excluirTarefa,
 } from "@/services/api";
 
 import { styles } from "@/styles/tarefas.styles";
@@ -24,25 +28,75 @@ type Tarefa = {
   usuario: string | null;
 };
 
+type Conclusao = {
+  id: number;
+  tarefa_id: number;
+  usuario_id: number;
+  concluida_em: string;
+  aprovada: number;
+};
+
 export default function Tarefas() {
+  const { usuario } = useUsuario();
+
   const [tarefas, setTarefas] = useState<Tarefa[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
   const [concluindo, setConcluindo] = useState<number | null>(null);
 
-  const usuarioId = 1;
+  const isResponsavel = usuario.tipo === "RESPONSAVEL";
 
-  useEffect(() => {
-    carregarTarefas();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      carregarTarefas();
+    }, [usuario.id])
+  );
+
+  function conclusaoEhDeHoje(dataConclusao: string) {
+    const data = new Date(
+      dataConclusao.replace(" ", "T") + "Z"
+    );
+
+    const hoje = new Date();
+
+    return (
+      data.getFullYear() === hoje.getFullYear() &&
+      data.getMonth() === hoje.getMonth() &&
+      data.getDate() === hoje.getDate()
+    );
+  }
 
   async function carregarTarefas() {
     try {
       setCarregando(true);
+      setErro("");
 
-      const dados = await buscarTarefas();
+      const dadosTarefas = await buscarTarefas();
 
-      setTarefas(dados);
+      if (usuario.tipo === "ADOLESCENTE") {
+        const dadosConclusoes = await buscarConclusoes();
+
+        const minhasConclusoesHoje = dadosConclusoes.filter(
+          (conclusao: Conclusao) =>
+            conclusao.usuario_id === usuario.id &&
+            conclusaoEhDeHoje(conclusao.concluida_em)
+        );
+
+        const tarefasConcluidasHoje = minhasConclusoesHoje.map(
+          (conclusao: Conclusao) =>
+            conclusao.tarefa_id
+        );
+
+        const minhasTarefas = dadosTarefas.filter(
+          (tarefa: Tarefa) =>
+            tarefa.usuario_id === usuario.id &&
+            !tarefasConcluidasHoje.includes(tarefa.id)
+        );
+
+        setTarefas(minhasTarefas);
+      } else {
+        setTarefas(dadosTarefas);
+      }
     } catch (error) {
       setErro("Não foi possível carregar as tarefas.");
     } finally {
@@ -55,7 +109,7 @@ export default function Tarefas() {
       setConcluindo(tarefaId);
       setErro("");
 
-      await concluirTarefa(tarefaId, usuarioId);
+      await concluirTarefa(tarefaId, usuario.id);
 
       await carregarTarefas();
     } catch (error) {
@@ -81,18 +135,10 @@ export default function Tarefas() {
     try {
       setErro("");
 
-      console.log("EXCLUINDO TAREFA:", tarefaId);
-
-      const resultado = await excluirTarefa(tarefaId);
-
-      console.log("RESPOSTA DA EXCLUSÃO:", resultado);
+      await excluirTarefa(tarefaId);
 
       await carregarTarefas();
-
-      console.log("LISTA ATUALIZADA");
     } catch (error) {
-      console.log("ERRO AO EXCLUIR:", error);
-
       setErro(
         error instanceof Error
           ? error.message
@@ -120,15 +166,21 @@ export default function Tarefas() {
       showsVerticalScrollIndicator={false}
     >
       <Text style={styles.eyebrow}>
-        MINHAS TAREFAS
+        {isResponsavel
+          ? "GERENCIAR TAREFAS"
+          : "MINHAS TAREFAS"}
       </Text>
 
       <Text style={styles.title}>
-        Bora cumprir as tarefas? 🚀
+        {isResponsavel
+          ? "Tarefas da casa 📋"
+          : "Bora cumprir as tarefas? 🚀"}
       </Text>
 
       <Text style={styles.subtitle}>
-        Complete suas tarefas e acumule XP.
+        {isResponsavel
+          ? "Acompanhe as tarefas cadastradas."
+          : "Complete suas tarefas e acumule XP."}
       </Text>
 
       {erro !== "" && (
@@ -142,16 +194,19 @@ export default function Tarefas() {
       {tarefas.length === 0 ? (
         <View style={styles.emptyCard}>
           <Text style={styles.emptyIcon}>
-            📋
+            {isResponsavel ? "📋" : "🎉"}
           </Text>
 
           <Text style={styles.emptyTitle}>
-            Nenhuma tarefa por enquanto
+            {isResponsavel
+              ? "Nenhuma tarefa cadastrada"
+              : "Tudo certo por hoje!"}
           </Text>
 
           <Text style={styles.emptyText}>
-            Quando uma tarefa for cadastrada,
-            ela aparecerá aqui.
+            {isResponsavel
+              ? "Quando uma tarefa for cadastrada, ela aparecerá aqui."
+              : "Você já concluiu todas as suas tarefas de hoje."}
           </Text>
         </View>
       ) : (
@@ -184,33 +239,44 @@ export default function Tarefas() {
               </Text>
             )}
 
-            <Pressable
-              style={[
-                styles.completeButton,
-                concluindo === tarefa.id &&
-                  styles.completeButtonDisabled,
-              ]}
-              onPress={() => handleConcluirTarefa(tarefa.id)}
-              disabled={concluindo === tarefa.id}
-            >
-              <Text style={styles.completeButtonText}>
-                {concluindo === tarefa.id
-                  ? "Enviando..."
-                  : "Concluir tarefa"}
+            {isResponsavel && tarefa.usuario && (
+              <Text style={styles.taskDescription}>
+                Responsável pela tarefa: {tarefa.usuario}
               </Text>
-            </Pressable>
+            )}
 
-            <Pressable
-  style={styles.deleteButton}
-  onPress={() => {
-    console.log("CLICOU NO EXCLUIR:", tarefa.id);
-    handleExcluirTarefa(tarefa.id);
-  }}
->
-  <Text style={styles.deleteButtonText}>
-    Excluir tarefa
-  </Text>
-</Pressable>
+            {!isResponsavel && (
+              <Pressable
+                style={[
+                  styles.completeButton,
+                  concluindo === tarefa.id &&
+                    styles.completeButtonDisabled,
+                ]}
+                onPress={() =>
+                  handleConcluirTarefa(tarefa.id)
+                }
+                disabled={concluindo === tarefa.id}
+              >
+                <Text style={styles.completeButtonText}>
+                  {concluindo === tarefa.id
+                    ? "Enviando..."
+                    : "Concluir tarefa"}
+                </Text>
+              </Pressable>
+            )}
+
+            {isResponsavel && (
+              <Pressable
+                style={styles.deleteButton}
+                onPress={() =>
+                  handleExcluirTarefa(tarefa.id)
+                }
+              >
+                <Text style={styles.deleteButtonText}>
+                  Excluir tarefa
+                </Text>
+              </Pressable>
+            )}
           </View>
         ))
       )}

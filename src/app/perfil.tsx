@@ -1,9 +1,30 @@
 import { router } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
+import { useUsuario } from "@/context/usuario";
 import { styles } from "@/styles/perfil.styles";
 
 export default function Perfil() {
+  const { usuario, trocarUsuario } = useUsuario();
+
+  const isResponsavel = usuario.tipo === "RESPONSAVEL";
+
+  function selecionarLeticia() {
+    trocarUsuario({
+      id: 1,
+      nome: "Letícia",
+      tipo: "RESPONSAVEL",
+    });
+  }
+
+  function selecionarArthur() {
+    trocarUsuario({
+      id: 3,
+      nome: "Arthur",
+      tipo: "ADOLESCENTE",
+    });
+  }
+
   return (
     <ScrollView
       style={styles.container}
@@ -17,78 +38,150 @@ export default function Perfil() {
       <View style={styles.profileCard}>
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>
-            L
+            {usuario.nome.charAt(0)}
           </Text>
         </View>
 
         <View style={styles.profileInfo}>
           <Text style={styles.name}>
-            Letícia
+            {usuario.nome}
           </Text>
 
           <Text style={styles.role}>
-            Responsável
+            {isResponsavel ? "Responsável" : "Adolescente"}
           </Text>
         </View>
       </View>
 
       <Text style={styles.sectionTitle}>
-        Administração
+        Trocar usuário
       </Text>
 
       <Text style={styles.sectionSubtitle}>
-        Gerencie as tarefas e recompensas do CasaXP.
+        Escolha quem está usando o CasaXP.
       </Text>
 
       <Pressable
-        style={styles.optionCard}
-        onPress={() => router.push("/aprovacoes")}
+        style={[
+          styles.optionCard,
+          usuario.id === 1 && styles.selectedOptionCard,
+        ]}
+        onPress={selecionarLeticia}
       >
         <View style={styles.optionIcon}>
           <Text style={styles.optionEmoji}>
-            📋
+            👩
           </Text>
         </View>
 
         <View style={styles.optionInfo}>
           <Text style={styles.optionTitle}>
-            Gerenciar tarefas
+            Letícia
           </Text>
 
           <Text style={styles.optionText}>
-            Crie tarefas e aprove as concluídas.
+            Responsável
           </Text>
         </View>
 
-        <Text style={styles.arrow}>
-          ›
-        </Text>
+        {usuario.id === 1 && (
+          <Text style={styles.selectedIcon}>
+            ✓
+          </Text>
+        )}
       </Pressable>
 
       <Pressable
-        style={styles.optionCard}
-        onPress={() => router.push("/gerenciar-recompensas")}
+        style={[
+          styles.optionCard,
+          usuario.id === 3 && styles.selectedOptionCard,
+        ]}
+        onPress={selecionarArthur}
       >
         <View style={styles.optionIcon}>
           <Text style={styles.optionEmoji}>
-            🎁
+            👦
           </Text>
         </View>
 
         <View style={styles.optionInfo}>
           <Text style={styles.optionTitle}>
-            Gerenciar recompensas
+            Arthur
           </Text>
 
           <Text style={styles.optionText}>
-            Crie e organize as recompensas.
+            Adolescente
           </Text>
         </View>
 
-        <Text style={styles.arrow}>
-          ›
-        </Text>
+        {usuario.id === 3 && (
+          <Text style={styles.selectedIcon}>
+            ✓
+          </Text>
+        )}
       </Pressable>
+
+      {isResponsavel && (
+        <>
+          <Text style={styles.sectionTitle}>
+            Administração
+          </Text>
+
+          <Text style={styles.sectionSubtitle}>
+            Gerencie as tarefas e recompensas do CasaXP.
+          </Text>
+
+          <Pressable
+            style={styles.optionCard}
+            onPress={() => router.push("/aprovacoes")}
+          >
+            <View style={styles.optionIcon}>
+              <Text style={styles.optionEmoji}>
+                📋
+              </Text>
+            </View>
+
+            <View style={styles.optionInfo}>
+              <Text style={styles.optionTitle}>
+                Gerenciar tarefas
+              </Text>
+
+              <Text style={styles.optionText}>
+                Crie tarefas e aprove as concluídas.
+              </Text>
+            </View>
+
+            <Text style={styles.arrow}>
+              ›
+            </Text>
+          </Pressable>
+
+          <Pressable
+            style={styles.optionCard}
+            onPress={() => router.push("/gerenciar-recompensas")}
+          >
+            <View style={styles.optionIcon}>
+              <Text style={styles.optionEmoji}>
+                🎁
+              </Text>
+            </View>
+
+            <View style={styles.optionInfo}>
+              <Text style={styles.optionTitle}>
+                Gerenciar recompensas
+              </Text>
+
+              <Text style={styles.optionText}>
+                Crie e organize as recompensas.
+              </Text>
+            </View>
+
+            <Text style={styles.arrow}>
+              ›
+            </Text>
+          </Pressable>
+        </>
+      )}
 
       <View style={styles.infoCard}>
         <Text style={styles.infoIcon}>

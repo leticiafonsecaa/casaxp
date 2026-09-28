@@ -8,28 +8,29 @@ import {
   View,
 } from "react-native";
 
+import { useUsuario } from "@/context/usuario";
 import { buscarUsuario } from "@/services/api";
 import { styles } from "@/styles/home.styles";
 
 export default function Home() {
+  const { usuario } = useUsuario();
+
   const [xp, setXp] = useState(0);
   const [carregando, setCarregando] = useState(true);
-
-  const usuarioId = 1;
 
   useFocusEffect(
     useCallback(() => {
       carregarUsuario();
-    }, [])
+    }, [usuario.id])
   );
 
   async function carregarUsuario() {
     try {
       setCarregando(true);
 
-      const usuario = await buscarUsuario(usuarioId);
+      const dadosUsuario = await buscarUsuario(usuario.id);
 
-      setXp(usuario.xp);
+      setXp(dadosUsuario.xp);
     } catch (error) {
       console.log("Erro ao carregar usuário:", error);
     } finally {
@@ -46,7 +47,7 @@ export default function Home() {
       <View style={styles.header}>
         <View>
           <Text style={styles.greeting}>
-            Olá, Letícia 👋
+            Olá, {usuario.nome} 👋
           </Text>
 
           <Text style={styles.title}>
@@ -56,7 +57,7 @@ export default function Home() {
 
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>
-            L
+            {usuario.nome.charAt(0)}
           </Text>
         </View>
       </View>

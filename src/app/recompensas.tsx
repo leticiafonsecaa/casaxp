@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -6,6 +7,8 @@ import {
   Text,
   View,
 } from "react-native";
+
+import { useUsuario } from "@/context/usuario";
 
 import {
   buscarRecompensas,
@@ -22,20 +25,25 @@ type Recompensa = {
 };
 
 export default function Recompensas() {
+  const { usuario } = useUsuario();
+
   const [recompensas, setRecompensas] = useState<Recompensa[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [resgatando, setResgatando] = useState<number | null>(null);
   const [mensagem, setMensagem] = useState("");
   const [erro, setErro] = useState("");
 
-  const usuarioId = 1;
-
-  useEffect(() => {
-    carregarRecompensas();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      carregarRecompensas();
+    }, [usuario.id])
+  );
 
   async function carregarRecompensas() {
     try {
+      setCarregando(true);
+      setErro("");
+
       const dados = await buscarRecompensas();
 
       setRecompensas(dados);
@@ -52,9 +60,14 @@ export default function Recompensas() {
       setErro("");
       setMensagem("");
 
-      await resgatarRecompensa(recompensaId, usuarioId);
+      await resgatarRecompensa(
+        recompensaId,
+        usuario.id
+      );
 
-      setMensagem("Recompensa resgatada com sucesso! 🎉");
+      setMensagem(
+        "Recompensa resgatada com sucesso! 🎉"
+      );
     } catch (error) {
       setErro(
         error instanceof Error
@@ -166,7 +179,9 @@ export default function Recompensas() {
                 resgatando === recompensa.id &&
                   styles.redeemButtonDisabled,
               ]}
-              onPress={() => handleResgatar(recompensa.id)}
+              onPress={() =>
+                handleResgatar(recompensa.id)
+              }
               disabled={resgatando === recompensa.id}
             >
               <Text style={styles.redeemButtonText}>

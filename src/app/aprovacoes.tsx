@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -8,6 +9,8 @@ import {
 } from "react-native";
 
 import { router } from "expo-router";
+
+import { useUsuario } from "@/context/usuario";
 
 import {
   aprovarConclusao,
@@ -28,14 +31,34 @@ type Conclusao = {
 };
 
 export default function Aprovacoes() {
+  const { usuario } = useUsuario();
+
   const [conclusoes, setConclusoes] = useState<Conclusao[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [aprovando, setAprovando] = useState<number | null>(null);
   const [erro, setErro] = useState("");
 
-  useEffect(() => {
-    carregarConclusoes();
-  }, []);
+  const isResponsavel = usuario.tipo === "RESPONSAVEL";
+
+  useFocusEffect(
+    useCallback(() => {
+      carregarConclusoes();
+    }, [usuario.id])
+  );
+
+  function conclusaoEhDeHoje(dataConclusao: string) {
+    const data = new Date(
+      dataConclusao.replace(" ", "T") + "Z"
+    );
+
+    const hoje = new Date();
+
+    return (
+      data.getFullYear() === hoje.getFullYear() &&
+      data.getMonth() === hoje.getMonth() &&
+      data.getDate() === hoje.getDate()
+    );
+  }
 
   async function carregarConclusoes() {
     try {
@@ -44,7 +67,19 @@ export default function Aprovacoes() {
 
       const dados = await buscarConclusoes();
 
-      setConclusoes(dados);
+      if (isResponsavel) {
+        // Letícia vê todas as conclusões.
+        setConclusoes(dados);
+      } else {
+        // Arthur vê somente as conclusões dele feitas hoje.
+        const minhasConclusoesHoje = dados.filter(
+          (conclusao: Conclusao) =>
+            conclusao.usuario_id === usuario.id &&
+            conclusaoEhDeHoje(conclusao.concluida_em)
+        );
+
+        setConclusoes(minhasConclusoesHoje);
+      }
     } catch (error) {
       setErro(
         error instanceof Error
@@ -81,7 +116,7 @@ export default function Aprovacoes() {
         <ActivityIndicator size="large" />
 
         <Text style={styles.loadingText}>
-          Carregando aprovações...
+          Carregando...
         </Text>
       </View>
     );
@@ -98,25 +133,33 @@ export default function Aprovacoes() {
       showsVerticalScrollIndicator={false}
     >
       <Text style={styles.eyebrow}>
-        ÁREA DO RESPONSÁVEL
+        {isResponsavel
+          ? "ÁREA DO RESPONSÁVEL"
+          : "MINHAS CONCLUSÕES"}
       </Text>
 
       <Text style={styles.title}>
-        Aprovar tarefas ✅
+        {isResponsavel
+          ? "Aprovar tarefas ✅"
+          : "Minhas tarefas 📝"}
       </Text>
 
       <Text style={styles.subtitle}>
-        Confira o que foi realizado antes de liberar o XP.
+        {isResponsavel
+          ? "Confira o que foi realizado antes de liberar o XP."
+          : "Confira as tarefas que você realizou hoje e o status da aprovação."}
       </Text>
 
-    <Pressable
-      style={styles.newTaskButton}
-      onPress={() => router.push("/nova-tarefa")}
-    >
-      <Text style={styles.newTaskButtonText}>
-        + Nova tarefa
-      </Text>
-    </Pressable>
+      {isResponsavel && (
+        <Pressable
+          style={styles.newTaskButton}
+          onPress={() => router.push("/nova-tarefa")}
+        >
+          <Text style={styles.newTaskButtonText}>
+            + Nova tarefa
+          </Text>
+        </Pressable>
+      )}
 
       {erro !== "" && (
         <View style={styles.errorCard}>
@@ -126,34 +169,121 @@ export default function Aprovacoes() {
         </View>
       )}
 
-      {pendentes.length === 0 ? (
+      {conclusoes.length === 0 ? (
         <View style={styles.emptyCard}>
           <View style={styles.emptyIconContainer}>
             <Text style={styles.emptyIcon}>
-              ✓
+              {isResponsavel ? "✓" : "📝"}
             </Text>
           </View>
 
           <Text style={styles.emptyTitle}>
-            Tudo em dia!
+            {isResponsavel
+              ? "Tudo em dia!"
+              : "Nenhuma tarefa concluída hoje"}
           </Text>
 
           <Text style={styles.emptyText}>
-            Não há tarefas aguardando aprovação no momento.
+            {isResponsavel
+              ? "Não há tarefas aguardando aprovação no momento."
+              : "Quando você concluir uma tarefa hoje, ela aparecerá aqui."}
           </Text>
         </View>
+      ) : isResponsavel ? (
+        <>
+          {pendentes.length > 0 && (
+            <View style={styles.pendingBadge}>
+              <Text style={styles.pendingText}>
+                {pendentes.length}{" "}
+                {pendentes.length === 1
+                  ? "tarefa aguardando"
+                  : "tarefas aguardando"}
+              </Text>
+            </View>
+          )}
+
+          {pendentes.length === 0 ? (
+            <View style={styles.emptyCard}>
+              <View style={styles.emptyIconContainer}>
+                <Text style={styles.emptyIcon}>
+                  ✓
+                </Text>
+              </View>
+
+              <Text style={styles.emptyTitle}>
+                Tudo em dia!
+              </Text>
+
+              <Text style={styles.emptyText}>
+                Não há tarefas aguardando aprovação no momento.
+              </Text>
+            </View>
+          ) : (
+            pendentes.map((conclusao) => (
+              <View
+                key={conclusao.id}
+                style={styles.approvalCard}
+              >
+                <View style={styles.cardTop}>
+                  <View style={styles.taskIcon}>
+                    <Text style={styles.taskEmoji}>
+                      ✓
+                    </Text>
+                  </View>
+
+                  <View style={styles.awaitingBadge}>
+                    <Text style={styles.awaitingText}>
+                      Aguardando
+                    </Text>
+                  </View>
+                </View>
+
+                <Text style={styles.taskTitle}>
+                  {conclusao.tarefa}
+                </Text>
+
+                <Text style={styles.userText}>
+                  Realizada por{" "}
+                  <Text style={styles.userName}>
+                    {conclusao.usuario}
+                  </Text>
+                </Text>
+
+                <Pressable
+                  style={[
+                    styles.approveButton,
+                    aprovando === conclusao.id &&
+                      styles.approveButtonDisabled,
+                  ]}
+                  onPress={() =>
+                    handleAprovar(conclusao.id)
+                  }
+                  disabled={aprovando === conclusao.id}
+                >
+                  <Text style={styles.approveButtonText}>
+                    {aprovando === conclusao.id
+                      ? "Aprovando..."
+                      : "Aprovar e liberar XP"}
+                  </Text>
+                </Pressable>
+              </View>
+            ))
+          )}
+        </>
       ) : (
         <>
-          <View style={styles.pendingBadge}>
-            <Text style={styles.pendingText}>
-              {pendentes.length}{" "}
-              {pendentes.length === 1
-                ? "tarefa aguardando"
-                : "tarefas aguardando"}
-            </Text>
-          </View>
+          {pendentes.length > 0 && (
+            <View style={styles.pendingBadge}>
+              <Text style={styles.pendingText}>
+                {pendentes.length}{" "}
+                {pendentes.length === 1
+                  ? "tarefa aguardando aprovação"
+                  : "tarefas aguardando aprovação"}
+              </Text>
+            </View>
+          )}
 
-          {pendentes.map((conclusao) => (
+          {conclusoes.map((conclusao) => (
             <View
               key={conclusao.id}
               style={styles.approvalCard}
@@ -161,13 +291,17 @@ export default function Aprovacoes() {
               <View style={styles.cardTop}>
                 <View style={styles.taskIcon}>
                   <Text style={styles.taskEmoji}>
-                    ✓
+                    {conclusao.aprovada === 1
+                      ? "✓"
+                      : "⏳"}
                   </Text>
                 </View>
 
                 <View style={styles.awaitingBadge}>
                   <Text style={styles.awaitingText}>
-                    Aguardando
+                    {conclusao.aprovada === 1
+                      ? "Aprovada"
+                      : "Aguardando"}
                   </Text>
                 </View>
               </View>
@@ -177,27 +311,10 @@ export default function Aprovacoes() {
               </Text>
 
               <Text style={styles.userText}>
-                Realizada por{" "}
-                <Text style={styles.userName}>
-                  {conclusao.usuario}
-                </Text>
+                {conclusao.aprovada === 1
+                  ? "✓ XP liberado"
+                  : "⏳ Aguardando aprovação do responsável"}
               </Text>
-
-              <Pressable
-                style={[
-                  styles.approveButton,
-                  aprovando === conclusao.id &&
-                    styles.approveButtonDisabled,
-                ]}
-                onPress={() => handleAprovar(conclusao.id)}
-                disabled={aprovando === conclusao.id}
-              >
-                <Text style={styles.approveButtonText}>
-                  {aprovando === conclusao.id
-                    ? "Aprovando..."
-                    : "Aprovar e liberar XP"}
-                </Text>
-              </Pressable>
             </View>
           ))}
         </>

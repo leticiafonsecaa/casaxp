@@ -149,4 +149,16 @@ export const styles = StyleSheet.create({
     lineHeight: 19,
     color: "#4B5563",
   },
+
+  selectedOptionCard: {
+  borderWidth: 2,
+  borderColor: "#2E7D32",
+  backgroundColor: "#E8F5E9",
+},
+
+selectedIcon: {
+  fontSize: 20,
+  fontWeight: "700",
+  color: "#2E7D32",
+},
 });
