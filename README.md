@@ -1,26 +1,28 @@
 # 🏠 CasaXP
 
-O **CasaXP** é um aplicativo desenvolvido para ajudar famílias a organizar as tarefas domésticas de adolescentes de uma forma simples, organizada e motivadora.
+O **CasaXP** é um aplicativo desenvolvido para ajudar famílias a organizar tarefas domésticas de adolescentes de forma simples, organizada e motivadora.
 
 A proposta é transformar as tarefas do dia a dia em um sistema de **XP e recompensas**.
 
-## 💡 Como funciona
+---
 
-O funcionamento do CasaXP é baseado em um ciclo simples:
+# 💡 Como funciona
+
+O CasaXP funciona através de um ciclo simples:
 
 ```text
-👨‍👩‍👧 Responsável
-        ↓
+👩 Responsável
+       ↓
 📋 Cria uma tarefa
-        ↓
+       ↓
 📱 Adolescente realiza a tarefa
-        ↓
+       ↓
 ✅ Marca como concluída
-        ↓
-👨‍👩‍👧 Responsável aprova
-        ↓
+       ↓
+👩 Responsável aprova
+       ↓
 ⭐ Adolescente recebe XP
-        ↓
+       ↓
 🎁 XP pode ser trocado por recompensas
 ```
 
@@ -32,7 +34,9 @@ O responsável pode criar uma tarefa:
 
 O adolescente realiza a tarefa e marca como concluída.
 
-Depois que o responsável aprovar:
+A tarefa deixa de aparecer entre as tarefas disponíveis naquele dia e fica aguardando a aprovação do responsável.
+
+Depois da aprovação:
 
 ```text
 +30 XP ⭐
@@ -44,34 +48,132 @@ Exemplo:
 
 ```text
 🎁 +1 hora de computador
+
 💰 Custo: 100 XP
 ```
 
 ---
 
+# 👥 Perfis
+
+O CasaXP possui atualmente dois tipos de usuário:
+
+### 👩 Responsável
+
+Pode:
+
+* Criar tarefas
+* Visualizar as tarefas cadastradas
+* Excluir tarefas
+* Visualizar tarefas concluídas
+* Aprovar tarefas realizadas
+* Liberar XP
+* Criar recompensas
+* Excluir recompensas
+
+### 👦 Adolescente
+
+Pode:
+
+* Visualizar suas próprias tarefas
+* Concluir tarefas
+* Acompanhar suas conclusões
+* Ver se uma tarefa está aguardando aprovação
+* Ver quando uma tarefa foi aprovada
+* Acompanhar seu XP
+* Resgatar recompensas
+
+O sistema atualmente utiliza uma troca simples de perfil, sem autenticação ou senha.
+
+---
+
+# 📅 Tarefas diárias
+
+As tarefas podem ser realizadas uma vez por dia.
+
+Quando o adolescente conclui uma tarefa:
+
+```text
+🧹 Varrer a casa
+       ↓
+✅ Concluída
+       ↓
+A tarefa desaparece das tarefas disponíveis
+       ↓
+👩 Aguardando aprovação
+```
+
+A conclusão continua registrada no banco de dados.
+
+No dia seguinte, a tarefa volta a aparecer para ser realizada novamente.
+
+O histórico das conclusões permanece armazenado para futuras funcionalidades.
+
+---
+
+# ⭐ Sistema de XP
+
+O XP é concedido somente depois que uma tarefa concluída é aprovada pelo responsável.
+
+```text
+Tarefa: Lavar a louça
+
+Valor: 20 XP
+       ↓
+Conclusão da tarefa
+       ↓
+Aprovação do responsável
+       ↓
+Usuário recebe +20 XP
+```
+
+O sistema também verifica se o usuário possui XP suficiente antes de permitir o resgate de uma recompensa.
+
+Ao resgatar uma recompensa, o custo em XP é descontado do usuário.
+
+---
+
+# 🎁 Sistema de recompensas
+
+O responsável pode cadastrar recompensas com um custo em XP.
+
+Exemplo:
+
+```text
+🎮 1 hora de videogame
+
+Custo: 100 XP
+```
+
+O adolescente pode resgatar a recompensa caso possua XP suficiente.
+
+O resgate é registrado no banco de dados.
+
+---
+
 # 🛠️ Tecnologias
 
-O projeto utiliza:
-
-### Frontend
+## Frontend
 
 * React Native
 * Expo
 * Expo Router
 * TypeScript
 
-### Backend
+## Backend
 
 * Node.js
 * Express
 * TypeScript
-
-### Banco de dados
-
-* SQLite
 * better-sqlite3
 
-## 🏗️ Arquitetura
+## Banco de dados
+
+* SQLite
+
+---
+
+# 🏗️ Arquitetura
 
 ```text
 📱 React Native / Expo
@@ -81,15 +183,13 @@ O projeto utiliza:
 🗄️ SQLite
 ```
 
-> Atualmente, o desenvolvimento está concentrado no **backend e na API**. O aplicativo mobile ainda está em desenvolvimento.
+O aplicativo mobile se comunica com a API REST, enquanto o backend é responsável pelas regras de negócio e pela comunicação com o banco de dados.
 
 ---
 
 # 🌐 Backend
 
-O backend é responsável pelas regras de negócio do CasaXP e pela comunicação com o banco de dados.
-
-Ele está localizado na pasta:
+O backend está localizado na pasta:
 
 ```text
 backend/
@@ -121,13 +221,15 @@ O CasaXP utiliza **SQLite** para armazenar os dados.
 
 As principais tabelas são:
 
-* `usuarios`
-* `tarefas`
-* `conclusoes`
-* `recompensas`
-* `resgates`
+```text
+usuarios
+tarefas
+conclusoes
+recompensas
+resgates
+```
 
-O relacionamento entre elas permite controlar:
+Relacionamento simplificado:
 
 ```text
 Usuário
@@ -143,48 +245,59 @@ Recompensas
    └── Resgates
 ```
 
+O banco de dados é criado automaticamente pelo backend quando o projeto é executado.
+
+O arquivo do banco é mantido localmente e não é versionado no Git.
+
 ---
 
-# ⭐ Sistema de XP
+# 📱 Aplicativo Mobile
 
-O XP é concedido quando uma tarefa concluída é aprovada pelo responsável.
+O aplicativo foi desenvolvido utilizando React Native com Expo e Expo Router.
 
-Por exemplo:
+As principais telas atualmente são:
 
 ```text
-Tarefa: Lavar a louça
-Valor: 20 XP
-
-        ↓
-
-Conclusão da tarefa
-
-        ↓
-
-Aprovação do responsável
-
-        ↓
-
-Usuário recebe +20 XP
+🏠 Home
+📋 Tarefas
+✅ Aprovações
+🎁 Recompensas
+👤 Perfil
 ```
 
-O sistema também verifica se o usuário possui XP suficiente antes de permitir o resgate de uma recompensa.
+Também existem telas destinadas ao gerenciamento:
+
+```text
+➕ Nova tarefa
+➕ Nova recompensa
+⚙️ Gerenciar recompensas
+```
+
+O conteúdo apresentado muda de acordo com o perfil selecionado.
 
 ---
 
-# 🧪 Testando o backend
+# 📦 Instalação
 
-Atualmente, o CasaXP pode ser testado diretamente através da **API**, utilizando ferramentas como:
+Clone o projeto:
 
-* Insomnia
-* Postman
-* Thunder Client
-* cURL
-* Navegador, para requisições `GET`
+```bash
+git clone <URL_DO_REPOSITORIO>
+```
 
-## 📦 Instalação
+Entre na pasta:
 
-Clone o projeto e entre na pasta do backend:
+```bash
+cd casaxp
+```
+
+Instale as dependências do projeto:
+
+```bash
+npm install
+```
+
+Entre no backend:
 
 ```bash
 cd backend
@@ -196,9 +309,11 @@ Instale as dependências:
 npm install
 ```
 
-## ▶️ Executando a API
+---
 
-Inicie o servidor:
+# ▶️ Executando o Backend
+
+Dentro da pasta `backend`, execute:
 
 ```bash
 npm run dev
@@ -210,13 +325,25 @@ A API será executada em:
 http://localhost:3000
 ```
 
-Ao iniciar, o banco de dados SQLite também será conectado e suas tabelas serão criadas automaticamente.
+Ao iniciar, o banco de dados SQLite será conectado e suas tabelas serão criadas automaticamente.
 
 ---
 
-# 🔎 Testando uma rota
+# 📱 Executando o aplicativo
 
-Depois de iniciar o backend, você pode acessar:
+Na raiz do projeto, execute:
+
+```bash
+npx expo start
+```
+
+O aplicativo pode ser executado utilizando o ambiente Expo configurado para o projeto.
+
+---
+
+# 🔎 Testando a API
+
+Depois de iniciar o backend, acesse:
 
 ```text
 http://localhost:3000/
@@ -230,7 +357,7 @@ A API deverá retornar:
 }
 ```
 
-Também é possível testar:
+Também é possível testar as seguintes rotas:
 
 ```text
 GET /usuarios
@@ -252,12 +379,31 @@ http://localhost:3000/usuarios
 
 ```text
 casaxp/
+
+├── src/
+│   ├── app/
+│   │   ├── _layout.tsx
+│   │   ├── index.tsx
+│   │   ├── tarefas.tsx
+│   │   ├── aprovacoes.tsx
+│   │   ├── recompensas.tsx
+│   │   ├── perfil.tsx
+│   │   ├── nova-tarefa.tsx
+│   │   ├── nova-recompensa.tsx
+│   │   └── gerenciar-recompensas.tsx
+│   │
+│   ├── components/
+│   ├── context/
+│   │   └── usuario.tsx
+│   │
+│   ├── services/
+│   │   └── api.ts
+│   │
+│   └── styles/
 │
-├── app/                    # Aplicativo mobile
+├── assets/
 │
-├── assets/                 # Recursos do aplicativo
-│
-├── backend/                # API
+├── backend/
 │   ├── src/
 │   │   ├── database.ts
 │   │   ├── server.ts
@@ -269,14 +415,66 @@ casaxp/
 │   │   └── database/
 │   │       └── init.ts
 │   │
-│   └── database/
-│       └── casaxp.db
+│   └── package.json
 │
 ├── app.json
 ├── package.json
 ├── tsconfig.json
+├── .gitignore
 └── README.md
 ```
+
+---
+
+# 🚀 Status do projeto
+
+O CasaXP possui atualmente um **MVP funcional**, com o fluxo principal implementado:
+
+```text
+👩 Responsável
+      ↓
+📋 Cria tarefa
+      ↓
+👦 Adolescente realiza
+      ↓
+✅ Conclui
+      ↓
+👩 Responsável aprova
+      ↓
+⭐ XP é liberado
+      ↓
+🎁 Adolescente resgata recompensa
+```
+
+Também estão implementados:
+
+* Perfis de usuário
+* Controle de funcionalidades por perfil
+* Tarefas diárias
+* Sistema de XP
+* Aprovação de tarefas
+* Recompensas
+* Resgate de recompensas
+* Persistência em SQLite
+* API REST
+* Integração entre aplicativo e backend
+
+---
+
+# 🔮 Possíveis melhorias futuras
+
+Algumas funcionalidades podem ser adicionadas futuramente:
+
+* Login e autenticação
+* Cadastro de múltiplos adolescentes
+* Histórico completo de tarefas e XP
+* Níveis e conquistas
+* Notificações
+* Edição de tarefas
+* Categorias de tarefas
+* Recorrência configurável
+* Banco de dados online
+* Publicação do aplicativo
 
 ---
 
@@ -284,4 +482,15 @@ casaxp/
 
 **Letícia**
 
-Projeto pessoal desenvolvido para estudo e prática de desenvolvimento **mobile, backend, APIs REST e banco de dados**.
+Projeto pessoal desenvolvido para estudo e prática de:
+
+* Desenvolvimento mobile
+* React Native
+* Expo
+* TypeScript
+* Node.js
+* APIs REST
+* SQLite
+* Banco de dados
+* Integração entre frontend e backend
+* Regras de negócio
