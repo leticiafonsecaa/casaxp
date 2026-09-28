@@ -36,6 +36,23 @@ router.post("/", (req, res) => {
     });
   }
 
+  // NOVO: impede concluir a mesma tarefa duas vezes no mesmo dia
+  const jaConcluidaHoje = db
+    .prepare(`
+      SELECT id
+      FROM conclusoes
+      WHERE tarefa_id = ?
+        AND usuario_id = ?
+        AND date(concluida_em, 'localtime') = date('now', 'localtime')
+    `)
+    .get(tarefa_id, usuario_id);
+
+  if (jaConcluidaHoje) {
+    return res.status(409).json({
+      erro: "Essa tarefa já foi concluída hoje."
+    });
+  }
+
   const resultado = db
     .prepare(`
       INSERT INTO conclusoes (tarefa_id, usuario_id)
