@@ -1,11 +1,12 @@
 import { useState } from "react";
 import {
-    ActivityIndicator,
-    Pressable,
-    ScrollView,
-    Text,
-    TextInput,
-    View,
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  Switch,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 
 import { criarTarefa } from "@/services/api";
@@ -15,6 +16,8 @@ export default function NovaTarefa() {
   const [titulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
   const [pontos, setPontos] = useState("");
+  // NOVO: por padrão a tarefa é diária
+  const [diaria, setDiaria] = useState(true);
 
   const [salvando, setSalvando] = useState(false);
   const [mensagem, setMensagem] = useState("");
@@ -49,11 +52,13 @@ export default function NovaTarefa() {
         descricao: descricao.trim(),
         pontos: xp,
         usuario_id: 3,
+        diaria,
       });
 
       setTitulo("");
       setDescricao("");
       setPontos("");
+      setDiaria(true);
 
       setMensagem("Tarefa cadastrada com sucesso! 🎉");
     } catch (error) {
@@ -139,6 +144,35 @@ export default function NovaTarefa() {
           onChangeText={setPontos}
           keyboardType="numeric"
         />
+
+        {/* NOVO: escolha entre tarefa diária e tarefa única */}
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginTop: 8,
+            marginBottom: 16,
+          }}
+        >
+          <View style={{ flex: 1, paddingRight: 12 }}>
+            <Text style={styles.label}>
+              Tarefa diária
+            </Text>
+
+            <Text style={{ color: "#6B7280", fontSize: 13 }}>
+              {diaria
+                ? "Volta todos os dias."
+                : "Tarefa única: some depois de concluída."}
+            </Text>
+          </View>
+
+          <Switch
+            value={diaria}
+            onValueChange={setDiaria}
+            trackColor={{ false: "#D1D5DB", true: "#2E7D32" }}
+          />
+        </View>
 
         <Pressable
           style={[

@@ -13,6 +13,7 @@ router.get("/", (req, res) => {
             tarefas.descricao,
             tarefas.pontos,
             tarefas.usuario_id,
+            tarefas.diaria,
             usuarios.nome AS usuario
         FROM tarefas
         LEFT JOIN usuarios
@@ -25,7 +26,7 @@ router.get("/", (req, res) => {
 
 // Criar tarefa
 router.post("/", (req, res) => {
-  const { titulo, descricao, pontos, usuario_id } = req.body;
+  const { titulo, descricao, pontos, usuario_id, diaria } = req.body;
 
   if (!titulo || pontos === undefined) {
     return res.status(400).json({
@@ -33,12 +34,15 @@ router.post("/", (req, res) => {
     });
   }
 
+  // NOVO: só é "única" se vier false ou 0. Qualquer outro caso é diária.
+  const ehDiaria = diaria === false || diaria === 0 ? 0 : 1;
+
   const resultado = db
     .prepare(`
-      INSERT INTO tarefas (titulo, descricao, pontos, usuario_id)
-      VALUES (?, ?, ?, ?)
+      INSERT INTO tarefas (titulo, descricao, pontos, usuario_id, diaria)
+      VALUES (?, ?, ?, ?, ?)
     `)
-    .run(titulo, descricao || null, pontos, usuario_id || null);
+    .run(titulo, descricao || null, pontos, usuario_id || null, ehDiaria);
 
   const tarefa = db
     .prepare("SELECT * FROM tarefas WHERE id = ?")

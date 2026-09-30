@@ -14,6 +14,7 @@ db.exec(`
     descricao TEXT,
     pontos INTEGER NOT NULL,
     usuario_id INTEGER,
+    diaria INTEGER NOT NULL DEFAULT 1,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
   );
 
@@ -50,6 +51,17 @@ try {
   db.exec(`
     ALTER TABLE usuarios
     ADD COLUMN xp INTEGER NOT NULL DEFAULT 0
+  `);
+} catch (erro) {
+  // A coluna já existe
+}
+
+// NOVO: 1 = tarefa diária (volta todo dia), 0 = tarefa única
+// As tarefas que já existiam ficam como diárias.
+try {
+  db.exec(`
+    ALTER TABLE tarefas
+    ADD COLUMN diaria INTEGER NOT NULL DEFAULT 1
   `);
 } catch (erro) {
   // A coluna já existe

@@ -15,6 +15,9 @@ import { styles } from "@/styles/home.styles";
 export default function Home() {
   const { usuario } = useUsuario();
 
+  // NOVO: descobre se quem está usando é a Letícia (Responsável)
+  const isResponsavel = usuario.tipo === "RESPONSAVEL";
+
   const [xp, setXp] = useState(0);
   const [carregando, setCarregando] = useState(true);
 
@@ -25,6 +28,12 @@ export default function Home() {
   );
 
   async function carregarUsuario() {
+    // NOVO: o Responsável não tem XP, então não precisa buscar
+    if (isResponsavel) {
+      setCarregando(false);
+      return;
+    }
+
     try {
       setCarregando(true);
 
@@ -66,33 +75,36 @@ export default function Home() {
         Suas tarefas de hoje estão esperando por você.
       </Text>
 
-      <View style={styles.xpCard}>
-        <View style={styles.xpTop}>
-          <View>
-            <Text style={styles.xpLabel}>
-              SEU XP
-            </Text>
-
-            {carregando ? (
-              <ActivityIndicator style={styles.loading} />
-            ) : (
-              <Text style={styles.xpValue}>
-                {xp}
+      {/* NOVO: o cartão de XP aparece só para o Arthur */}
+      {!isResponsavel && (
+        <View style={styles.xpCard}>
+          <View style={styles.xpTop}>
+            <View>
+              <Text style={styles.xpLabel}>
+                SEU XP
               </Text>
-            )}
+
+              {carregando ? (
+                <ActivityIndicator style={styles.loading} />
+              ) : (
+                <Text style={styles.xpValue}>
+                  {xp}
+                </Text>
+              )}
+            </View>
+
+            <View style={styles.starCircle}>
+              <Text style={styles.star}>
+                ⭐
+              </Text>
+            </View>
           </View>
 
-          <View style={styles.starCircle}>
-            <Text style={styles.star}>
-              ⭐
-            </Text>
-          </View>
+          <Text style={styles.xpMessage}>
+            Continue acumulando XP para desbloquear recompensas! 🚀
+          </Text>
         </View>
-
-        <Text style={styles.xpMessage}>
-          Continue acumulando XP para desbloquear recompensas! 🚀
-        </Text>
-      </View>
+      )}
 
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>
@@ -124,7 +136,10 @@ export default function Home() {
           </Text>
 
           <Text style={styles.taskText}>
-            Confira suas tarefas e ganhe XP.
+            {/* NOVO: texto sem falar de XP para a Letícia */}
+            {isResponsavel
+              ? "Veja e gerencie as tarefas da casa."
+              : "Confira suas tarefas e ganhe XP."}
           </Text>
         </View>
 
@@ -149,7 +164,10 @@ export default function Home() {
           </Text>
 
           <Text style={styles.rewardText}>
-            Troque seu XP por prêmios.
+            {/* NOVO: texto sem falar de XP para a Letícia */}
+            {isResponsavel
+              ? "Veja e gerencie as recompensas."
+              : "Troque seu XP por prêmios."}
           </Text>
         </View>
 

@@ -36,21 +36,53 @@ router.post("/", (req, res) => {
     });
   }
 
-  // NOVO: impede concluir a mesma tarefa duas vezes no mesmo dia
-  const jaConcluidaHoje = db
+  // NOVO: descobre se a tarefa é diária ou única
+  const tarefa = db
     .prepare(`
-      SELECT id
-      FROM conclusoes
-      WHERE tarefa_id = ?
-        AND usuario_id = ?
-        AND date(concluida_em, 'localtime') = date('now', 'localtime')
+      SELECT id, diaria
+      FROM tarefas
+      WHERE id = ?
     `)
-    .get(tarefa_id, usuario_id);
+    .get(tarefa_id) as { id: number; diaria: number } | undefined;
 
-  if (jaConcluidaHoje) {
-    return res.status(409).json({
-      erro: "Essa tarefa já foi concluída hoje."
+  if (!tarefa) {
+    return res.status(404).json({
+      erro: "Tarefa não encontrada."
     });
+  }
+
+  if (tarefa.diaria === 1) {
+    // Diária: só pode ser concluída uma vez por dia
+    const jaConcluidaHoje = db
+      .prepare(`
+        SELECT id
+        FROM conclusoes
+        WHERE tarefa_id = ?
+          AND usuario_id = ?
+          AND date(concluida_em, 'localtime') = date('now', 'localtime')
+      `)
+      .get(tarefa_id, usuario_id);
+
+    if (jaConcluidaHoje) {
+      return res.status(409).json({
+        erro: "Essa tarefa já foi concluída hoje."
+      });
+    }
+  } else {
+    // Única: só pode ser concluída uma vez na vida
+    const jaConcluida = db
+      .prepare(`
+        SELECT id
+        FROM conclusoes
+        WHERE tarefa_id = ?
+      `)
+      .get(tarefa_id);
+
+    if (jaConcluida) {
+      return res.status(409).json({
+        erro: "Essa tarefa já foi concluída."
+      });
+    }
   }
 
   const resultado = db

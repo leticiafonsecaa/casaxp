@@ -112,6 +112,7 @@ export async function criarTarefa(dados: {
   descricao: string;
   pontos: number;
   usuario_id: number;
+  diaria: boolean;
 }) {
   const resposta = await fetch(`${API_URL}/tarefas`, {
     method: "POST",

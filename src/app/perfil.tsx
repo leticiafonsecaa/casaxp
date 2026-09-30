@@ -128,12 +128,40 @@ export default function Perfil() {
           </Text>
 
           <Text style={styles.sectionSubtitle}>
-            Gerencie as tarefas e recompensas do CasaXP.
+            Acesso rápido às áreas de gerenciamento do CasaXP.
           </Text>
+
+    <Pressable
+            style={styles.optionCard}
+            onPress={() => router.push("/recompensas")}
+          >
+            <View style={styles.optionIcon}>
+              <Text style={styles.optionEmoji}>
+                🎁
+              </Text>
+            </View>
+
+            <View style={styles.optionInfo}>
+              <Text style={styles.optionTitle}>
+                Recompensas
+              </Text>
+
+              <Text style={styles.optionText}>
+                {/* NOVO: texto sem falar de XP para a Letícia */}
+                {isResponsavel
+                  ? "Veja e gerencie as recompensas."
+                  : "Troque seu XP por prêmios."}
+              </Text>
+            </View>
+
+            <Text style={styles.arrow}>
+              ›
+            </Text>
+          </Pressable>
 
           <Pressable
             style={styles.optionCard}
-            onPress={() => router.push("/aprovacoes")}
+            onPress={() => router.push("/tarefas")}
           >
             <View style={styles.optionIcon}>
               <Text style={styles.optionEmoji}>
@@ -147,7 +175,7 @@ export default function Perfil() {
               </Text>
 
               <Text style={styles.optionText}>
-                Crie tarefas e aprove as concluídas.
+                Crie, veja e exclua as tarefas.
               </Text>
             </View>
 
@@ -158,21 +186,21 @@ export default function Perfil() {
 
           <Pressable
             style={styles.optionCard}
-            onPress={() => router.push("/gerenciar-recompensas")}
+            onPress={() => router.push("/aprovacoes")}
           >
             <View style={styles.optionIcon}>
               <Text style={styles.optionEmoji}>
-                🎁
+                ✅
               </Text>
             </View>
 
             <View style={styles.optionInfo}>
               <Text style={styles.optionTitle}>
-                Gerenciar recompensas
+                Aprovar tarefas
               </Text>
 
               <Text style={styles.optionText}>
-                Crie e organize as recompensas.
+                Aprove as tarefas concluídas e libere o XP.
               </Text>
             </View>
 
@@ -180,6 +208,9 @@ export default function Perfil() {
               ›
             </Text>
           </Pressable>
+
+          {/* NOVO: o cartão "Gerenciar recompensas" foi removido.
+              Agora a Letícia gerencia tudo na aba Recompensas. */}
         </>
       )}
 

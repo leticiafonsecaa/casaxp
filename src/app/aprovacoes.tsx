@@ -8,7 +8,6 @@ import {
   View,
 } from "react-native";
 
-import { router } from "expo-router";
 
 import { useUsuario } from "@/context/usuario";
 
@@ -150,17 +149,6 @@ export default function Aprovacoes() {
           : "Confira as tarefas que você realizou hoje e o status da aprovação."}
       </Text>
 
-      {isResponsavel && (
-        <Pressable
-          style={styles.newTaskButton}
-          onPress={() => router.push("/nova-tarefa")}
-        >
-          <Text style={styles.newTaskButtonText}>
-            + Nova tarefa
-          </Text>
-        </Pressable>
-      )}
-
       {erro !== "" && (
         <View style={styles.errorCard}>
           <Text style={styles.error}>
@@ -275,10 +263,11 @@ export default function Aprovacoes() {
           {pendentes.length > 0 && (
             <View style={styles.pendingBadge}>
               <Text style={styles.pendingText}>
+                {/* NOVO: "em análise" no lugar de "aguardando aprovação" */}
                 {pendentes.length}{" "}
                 {pendentes.length === 1
-                  ? "tarefa aguardando aprovação"
-                  : "tarefas aguardando aprovação"}
+                  ? "tarefa em análise"
+                  : "tarefas em análise"}
               </Text>
             </View>
           )}
@@ -299,9 +288,10 @@ export default function Aprovacoes() {
 
                 <View style={styles.awaitingBadge}>
                   <Text style={styles.awaitingText}>
+                    {/* NOVO: "Em análise" no lugar de "Aguardando" */}
                     {conclusao.aprovada === 1
                       ? "Aprovada"
-                      : "Aguardando"}
+                      : "Em análise"}
                   </Text>
                 </View>
               </View>
@@ -311,9 +301,10 @@ export default function Aprovacoes() {
               </Text>
 
               <Text style={styles.userText}>
+                {/* NOVO: texto explicando o status para o Arthur */}
                 {conclusao.aprovada === 1
                   ? "✓ XP liberado"
-                  : "⏳ Aguardando aprovação do responsável"}
+                  : "⏳ Em análise pelo responsável"}
               </Text>
             </View>
           ))}

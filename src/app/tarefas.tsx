@@ -1,4 +1,4 @@
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import {
   ActivityIndicator,
@@ -18,6 +18,8 @@ import {
 } from "@/services/api";
 
 import { styles } from "@/styles/tarefas.styles";
+// NOVO: reaproveita o estilo do botão "+ Nova tarefa"
+import { styles as aprovacoesStyles } from "@/styles/aprovacoes.styles";
 
 type Tarefa = {
   id: number;
@@ -26,6 +28,7 @@ type Tarefa = {
   pontos: number;
   usuario_id: number | null;
   usuario: string | null;
+  diaria: number; // 1 = diária, 0 = única
 };
 
 type Conclusao = {
@@ -72,31 +75,44 @@ export default function Tarefas() {
       setErro("");
 
       const dadosTarefas = await buscarTarefas();
+      const dadosConclusoes = await buscarConclusoes();
 
-      if (usuario.tipo === "ADOLESCENTE") {
-        const dadosConclusoes = await buscarConclusoes();
+      const tarefasVisiveis = dadosTarefas.filter(
+        (tarefa: Tarefa) => {
+          const conclusoesDaTarefa = dadosConclusoes.filter(
+            (conclusao: Conclusao) =>
+              conclusao.tarefa_id === tarefa.id
+          );
 
-        const minhasConclusoesHoje = dadosConclusoes.filter(
-          (conclusao: Conclusao) =>
-            conclusao.usuario_id === usuario.id &&
-            conclusaoEhDeHoje(conclusao.concluida_em)
-        );
+          // Tarefa única já concluída: some para todo mundo
+          if (tarefa.diaria === 0 && conclusoesDaTarefa.length > 0) {
+            return false;
+          }
 
-        const tarefasConcluidasHoje = minhasConclusoesHoje.map(
-          (conclusao: Conclusao) =>
-            conclusao.tarefa_id
-        );
+          if (usuario.tipo === "ADOLESCENTE") {
+            // Arthur vê somente as tarefas dele
+            if (tarefa.usuario_id !== usuario.id) {
+              return false;
+            }
 
-        const minhasTarefas = dadosTarefas.filter(
-          (tarefa: Tarefa) =>
-            tarefa.usuario_id === usuario.id &&
-            !tarefasConcluidasHoje.includes(tarefa.id)
-        );
+            // Tarefa diária já concluída hoje: some até amanhã
+            const concluiuHoje = conclusoesDaTarefa.some(
+              (conclusao: Conclusao) =>
+                conclusao.usuario_id === usuario.id &&
+                conclusaoEhDeHoje(conclusao.concluida_em)
+            );
 
-        setTarefas(minhasTarefas);
-      } else {
-        setTarefas(dadosTarefas);
-      }
+            if (concluiuHoje) {
+              return false;
+            }
+          }
+
+          // Letícia continua vendo as tarefas diárias
+          return true;
+        }
+      );
+
+      setTarefas(tarefasVisiveis);
     } catch (error) {
       setErro("Não foi possível carregar as tarefas.");
     } finally {
@@ -179,9 +195,21 @@ export default function Tarefas() {
 
       <Text style={styles.subtitle}>
         {isResponsavel
-          ? "Acompanhe as tarefas cadastradas."
+          ? "Crie, acompanhe e exclua as tarefas cadastradas."
           : "Complete suas tarefas e acumule XP."}
       </Text>
+
+      {/* NOVO: botão de criar tarefa (só Letícia) */}
+      {isResponsavel && (
+        <Pressable
+          style={aprovacoesStyles.newTaskButton}
+          onPress={() => router.push("/nova-tarefa")}
+        >
+          <Text style={aprovacoesStyles.newTaskButtonText}>
+            + Nova tarefa
+          </Text>
+        </Pressable>
+      )}
 
       {erro !== "" && (
         <View style={styles.errorCard}>
@@ -205,7 +233,7 @@ export default function Tarefas() {
 
           <Text style={styles.emptyText}>
             {isResponsavel
-              ? "Quando uma tarefa for cadastrada, ela aparecerá aqui."
+              ? "Toque em + Nova tarefa para cadastrar a primeira."
               : "Você já concluiu todas as suas tarefas de hoje."}
           </Text>
         </View>

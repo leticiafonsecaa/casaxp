@@ -1,4 +1,4 @@
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import {
   ActivityIndicator,
@@ -12,10 +12,13 @@ import { useUsuario } from "@/context/usuario";
 
 import {
   buscarRecompensas,
+  excluirRecompensa,
   resgatarRecompensa,
 } from "@/services/api";
 
 import { styles } from "@/styles/recompensas.styles";
+// NOVO: reaproveita os estilos dos botões "Nova recompensa" e "Excluir"
+import { styles as gerenciarStyles } from "@/styles/gerenciar-recompensas.styles";
 
 type Recompensa = {
   id: number;
@@ -26,6 +29,9 @@ type Recompensa = {
 
 export default function Recompensas() {
   const { usuario } = useUsuario();
+
+  // NOVO: descobre se quem está usando é a Letícia (Responsável)
+  const isResponsavel = usuario.tipo === "RESPONSAVEL";
 
   const [recompensas, setRecompensas] = useState<Recompensa[]>([]);
   const [carregando, setCarregando] = useState(true);
@@ -55,6 +61,11 @@ export default function Recompensas() {
   }
 
   async function handleResgatar(recompensaId: number) {
+    // NOVO: proteção extra, o Responsável nunca resgata
+    if (isResponsavel) {
+      return;
+    }
+
     try {
       setResgatando(recompensaId);
       setErro("");
@@ -79,6 +90,36 @@ export default function Recompensas() {
     }
   }
 
+  // NOVO: exclusão feita direto nesta tela (só Letícia)
+  async function handleExcluirRecompensa(recompensaId: number) {
+    if (!isResponsavel) {
+      return;
+    }
+
+    const confirmar = window.confirm(
+      "Tem certeza que deseja excluir esta recompensa?"
+    );
+
+    if (!confirmar) {
+      return;
+    }
+
+    try {
+      setErro("");
+      setMensagem("");
+
+      await excluirRecompensa(recompensaId);
+
+      await carregarRecompensas();
+    } catch (error) {
+      setErro(
+        error instanceof Error
+          ? error.message
+          : "Não foi possível excluir a recompensa."
+      );
+    }
+  }
+
   if (carregando) {
     return (
       <View style={styles.loadingContainer}>
@@ -97,17 +138,36 @@ export default function Recompensas() {
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
     >
+      {/* NOVO: textos diferentes para cada perfil */}
       <Text style={styles.eyebrow}>
-        LOJA DE RECOMPENSAS
+        {isResponsavel
+          ? "GERENCIAR RECOMPENSAS"
+          : "LOJA DE RECOMPENSAS"}
       </Text>
 
       <Text style={styles.title}>
-        Troque seu XP 🎁
+        {isResponsavel
+          ? "Recompensas da casa 🎁"
+          : "Troque seu XP 🎁"}
       </Text>
 
       <Text style={styles.subtitle}>
-        Use o XP que você conquistou para desbloquear recompensas.
+        {isResponsavel
+          ? "Adicione ou exclua as recompensas disponíveis."
+          : "Use o XP que você conquistou para desbloquear recompensas."}
       </Text>
+
+      {/* NOVO: botão de adicionar (só Letícia) */}
+      {isResponsavel && (
+        <Pressable
+          style={gerenciarStyles.newRewardButton}
+          onPress={() => router.push("/nova-recompensa")}
+        >
+          <Text style={gerenciarStyles.newRewardButtonText}>
+            + Nova recompensa
+          </Text>
+        </Pressable>
+      )}
 
       {mensagem !== "" && (
         <View style={styles.successCard}>
@@ -140,7 +200,9 @@ export default function Recompensas() {
           </Text>
 
           <Text style={styles.emptyText}>
-            Novas recompensas aparecerão aqui.
+            {isResponsavel
+              ? "Toque em + Nova recompensa para cadastrar a primeira."
+              : "Novas recompensas aparecerão aqui."}
           </Text>
         </View>
       ) : (
@@ -173,23 +235,40 @@ export default function Recompensas() {
               </Text>
             )}
 
-            <Pressable
-              style={[
-                styles.redeemButton,
-                resgatando === recompensa.id &&
-                  styles.redeemButtonDisabled,
-              ]}
-              onPress={() =>
-                handleResgatar(recompensa.id)
-              }
-              disabled={resgatando === recompensa.id}
-            >
-              <Text style={styles.redeemButtonText}>
-                {resgatando === recompensa.id
-                  ? "Resgatando..."
-                  : "Resgatar recompensa"}
-              </Text>
-            </Pressable>
+            {/* NOVO: resgatar só para o Arthur */}
+            {!isResponsavel && (
+              <Pressable
+                style={[
+                  styles.redeemButton,
+                  resgatando === recompensa.id &&
+                    styles.redeemButtonDisabled,
+                ]}
+                onPress={() =>
+                  handleResgatar(recompensa.id)
+                }
+                disabled={resgatando === recompensa.id}
+              >
+                <Text style={styles.redeemButtonText}>
+                  {resgatando === recompensa.id
+                    ? "Resgatando..."
+                    : "Resgatar recompensa"}
+                </Text>
+              </Pressable>
+            )}
+
+            {/* NOVO: excluir só para a Letícia */}
+            {isResponsavel && (
+              <Pressable
+                style={gerenciarStyles.deleteButton}
+                onPress={() =>
+                  handleExcluirRecompensa(recompensa.id)
+                }
+              >
+                <Text style={gerenciarStyles.deleteButtonText}>
+                  Excluir recompensa
+                </Text>
+              </Pressable>
+            )}
           </View>
         ))
       )}
