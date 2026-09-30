@@ -147,7 +147,6 @@ export default function Perfil() {
               </Text>
 
               <Text style={styles.optionText}>
-                {/* NOVO: texto sem falar de XP para a Letícia */}
                 {isResponsavel
                   ? "Veja e gerencie as recompensas."
                   : "Troque seu XP por prêmios."}
@@ -209,8 +208,6 @@ export default function Perfil() {
             </Text>
           </Pressable>
 
-          {/* NOVO: o cartão "Gerenciar recompensas" foi removido.
-              Agora a Letícia gerencia tudo na aba Recompensas. */}
         </>
       )}
 

@@ -56,6 +56,26 @@ try {
   // A coluna já existe
 }
 
+// Adiciona email aos usuários existentes
+try {
+  db.exec(`
+    ALTER TABLE usuarios
+    ADD COLUMN email TEXT
+  `);
+} catch (erro) {
+  // A coluna já existe
+}
+
+// Adiciona senha aos usuários existentes
+try {
+  db.exec(`
+    ALTER TABLE usuarios
+    ADD COLUMN senha TEXT
+  `);
+} catch (erro) {
+  // A coluna já existe
+}
+
 // NOVO: 1 = tarefa diária (volta todo dia), 0 = tarefa única
 // As tarefas que já existiam ficam como diárias.
 try {

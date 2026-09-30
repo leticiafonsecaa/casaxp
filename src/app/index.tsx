@@ -15,7 +15,6 @@ import { styles } from "@/styles/home.styles";
 export default function Home() {
   const { usuario } = useUsuario();
 
-  // NOVO: descobre se quem está usando é a Letícia (Responsável)
   const isResponsavel = usuario.tipo === "RESPONSAVEL";
 
   const [xp, setXp] = useState(0);
@@ -136,7 +135,6 @@ export default function Home() {
           </Text>
 
           <Text style={styles.taskText}>
-            {/* NOVO: texto sem falar de XP para a Letícia */}
             {isResponsavel
               ? "Veja e gerencie as tarefas da casa."
               : "Confira suas tarefas e ganhe XP."}
@@ -164,7 +162,6 @@ export default function Home() {
           </Text>
 
           <Text style={styles.rewardText}>
-            {/* NOVO: texto sem falar de XP para a Letícia */}
             {isResponsavel
               ? "Veja e gerencie as recompensas."
               : "Troque seu XP por prêmios."}

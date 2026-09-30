@@ -30,7 +30,6 @@ type Recompensa = {
 export default function Recompensas() {
   const { usuario } = useUsuario();
 
-  // NOVO: descobre se quem está usando é a Letícia (Responsável)
   const isResponsavel = usuario.tipo === "RESPONSAVEL";
 
   const [recompensas, setRecompensas] = useState<Recompensa[]>([]);
@@ -90,7 +89,6 @@ export default function Recompensas() {
     }
   }
 
-  // NOVO: exclusão feita direto nesta tela (só Letícia)
   async function handleExcluirRecompensa(recompensaId: number) {
     if (!isResponsavel) {
       return;
@@ -157,7 +155,6 @@ export default function Recompensas() {
           : "Use o XP que você conquistou para desbloquear recompensas."}
       </Text>
 
-      {/* NOVO: botão de adicionar (só Letícia) */}
       {isResponsavel && (
         <Pressable
           style={gerenciarStyles.newRewardButton}
@@ -256,7 +253,6 @@ export default function Recompensas() {
               </Pressable>
             )}
 
-            {/* NOVO: excluir só para a Letícia */}
             {isResponsavel && (
               <Pressable
                 style={gerenciarStyles.deleteButton}

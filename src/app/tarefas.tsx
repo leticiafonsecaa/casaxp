@@ -107,7 +107,6 @@ export default function Tarefas() {
             }
           }
 
-          // Letícia continua vendo as tarefas diárias
           return true;
         }
       );
@@ -199,7 +198,6 @@ export default function Tarefas() {
           : "Complete suas tarefas e acumule XP."}
       </Text>
 
-      {/* NOVO: botão de criar tarefa (só Letícia) */}
       {isResponsavel && (
         <Pressable
           style={aprovacoesStyles.newTaskButton}
