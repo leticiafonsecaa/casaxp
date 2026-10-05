@@ -74,7 +74,6 @@ export default function Home() {
         Suas tarefas de hoje estão esperando por você.
       </Text>
 
-      {/* NOVO: o cartão de XP aparece só para o Arthur */}
       {!isResponsavel && (
         <View style={styles.xpCard}>
           <View style={styles.xpTop}>

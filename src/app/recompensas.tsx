@@ -232,7 +232,6 @@ export default function Recompensas() {
               </Text>
             )}
 
-            {/* NOVO: resgatar só para o Arthur */}
             {!isResponsavel && (
               <Pressable
                 style={[

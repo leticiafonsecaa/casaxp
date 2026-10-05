@@ -67,10 +67,8 @@ export default function Aprovacoes() {
       const dados = await buscarConclusoes();
 
       if (isResponsavel) {
-        // Letícia vê todas as conclusões.
         setConclusoes(dados);
       } else {
-        // Arthur vê somente as conclusões dele feitas hoje.
         const minhasConclusoesHoje = dados.filter(
           (conclusao: Conclusao) =>
             conclusao.usuario_id === usuario.id &&
@@ -301,7 +299,6 @@ export default function Aprovacoes() {
               </Text>
 
               <Text style={styles.userText}>
-                {/* NOVO: texto explicando o status para o Arthur */}
                 {conclusao.aprovada === 1
                   ? "✓ XP liberado"
                   : "⏳ Em análise pelo responsável"}

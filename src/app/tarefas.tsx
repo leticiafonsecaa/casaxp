@@ -90,7 +90,6 @@ export default function Tarefas() {
           }
 
           if (usuario.tipo === "ADOLESCENTE") {
-            // Arthur vê somente as tarefas dele
             if (tarefa.usuario_id !== usuario.id) {
               return false;
             }
